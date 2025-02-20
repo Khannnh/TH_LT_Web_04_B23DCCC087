@@ -42,7 +42,12 @@
 		component: '@/pages/Game',
 		icon: 'CalculatorOutlined',
 	  },
-
+	  {
+		path: '/learning-management',
+		name: 'Quản lý học tập',
+		icon: 'ReadOutlined',
+		component: './LearningManagement',
+	  },
 
 	// DANH MUC HE THONG
 	// {
