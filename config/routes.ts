@@ -36,6 +36,13 @@
 		component: './RandomUser',
 		icon: 'ArrowsAltOutlined',
 	},
+	{
+		path: '/trochoidoanso',
+		name: 'Trò chơi đoán số',
+		component: '@/pages/Game',
+		icon: 'CalculatorOutlined',
+	  },
+
 
 	// DANH MUC HE THONG
 	// {
