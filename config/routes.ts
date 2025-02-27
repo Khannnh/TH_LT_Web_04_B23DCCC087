@@ -16,6 +16,7 @@
 		],
 	},
 
+
 	///////////////////////////////////
 	// DEFAULT MENU
 	{
@@ -37,16 +38,32 @@
 		icon: 'ArrowsAltOutlined',
 	},
 	{
+		path: '/study-management',
+		name: 'study',
+		icon: 'read',
+		routes: [
+		  {
+			path: '/study-management/subjects',
+			name: 'subjects',
+			component: '@/pages/StudyManagement/Subjects',
+		  },
+		  {
+			path: '/study-management/progress',
+			name: 'progress',
+			component: '@/pages/StudyManagement/Progress',
+		  },
+		  {
+			path: '/study-management/goals',
+			name: 'goals',
+			component: '@/pages/StudyManagement/Goals',
+		  },
+		],
+	  },
+	{
 		path: '/trochoidoanso',
 		name: 'Trò chơi đoán số',
 		component: '@/pages/Game',
 		icon: 'CalculatorOutlined',
-	  },
-	  {
-		path: '/learning-management',
-		name: 'Quản lý học tập',
-		icon: 'ReadOutlined',
-		component: './LearningManagement',
 	  },
 
 	// DANH MUC HE THONG
@@ -101,4 +118,5 @@
 	{
 		component: './exception/404',
 	},
+	
 ];
