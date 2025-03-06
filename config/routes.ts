@@ -35,11 +35,7 @@
 			name: 'exams',
 			component: './QuestionBank/Exams',
 		  },
-		  {
-			path: '/question-bank/exam-history',
-			name: 'examhistory',
-			component: './QuestionBank/ExamHistory',
-		  },
+		  
 		],
 	},
 	{

@@ -91,6 +91,15 @@ const Exams: React.FC = () => {
     setVisible(false);
   };
 
+  const handleTemplateSelect = (examId: string) => {
+    const selectedExam = exams.find(e => e.id === examId);
+    if (selectedExam) {
+      form.setFieldsValue({
+        structure: selectedExam.structure
+      });
+    }
+  };
+
   const columns = [
     {
       title: 'Tên đề thi',
@@ -180,6 +189,23 @@ const Exams: React.FC = () => {
             rules={[{ required: true, message: 'Vui lòng nhập tên đề thi' }]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="templateExam"
+            label="Cấu trúc đề sẵn"
+          >
+            <Select
+              allowClear
+              placeholder="Chọn đề thi mẫu"
+              onChange={handleTemplateSelect}
+            >
+              {exams.map(exam => (
+                <Select.Option key={exam.id} value={exam.id}>
+                  {exam.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.List name="structure">
