@@ -16,9 +16,46 @@
 		],
 	},
 
-
 	///////////////////////////////////
 	// DEFAULT MENU
+	{
+		path: '/question-bank',
+		name: 'questionbank',
+		icon: 'BookOutlined',
+		routes: [
+			{
+				path: '/question-bank/subjects',
+				name: 'subjects',
+				component: './QuestionBank/Subjects',
+			},
+			{
+				path: '/question-bank/questions',
+				name: 'questions',
+				component: './QuestionBank/Questions',
+			},
+			{
+				path: '/question-bank/exams',
+				name: 'exams',
+				component: './QuestionBank/Exams',
+			},
+		],
+	},
+	{
+		path: '/rock-paper-scissors',
+		name: 'rockpaperscissors',
+		routes: [
+			{
+				path: '/rock-paper-scissors/game',
+				name: 'game',
+				component: './RockPaperScissors/Game',
+			},
+			{
+				path: '/rock-paper-scissors/history',
+				name: 'history',
+				component: './RockPaperScissors/History',
+			},
+		],
+	},
 	{
 		path: '/dashboard',
 		name: 'Dashboard',
@@ -42,29 +79,29 @@
 		name: 'study',
 		icon: 'read',
 		routes: [
-		  {
-			path: '/study-management/subjects',
-			name: 'subjects',
-			component: '@/pages/StudyManagement/Subjects',
-		  },
-		  {
-			path: '/study-management/progress',
-			name: 'progress',
-			component: '@/pages/StudyManagement/Progress',
-		  },
-		  {
-			path: '/study-management/goals',
-			name: 'goals',
-			component: '@/pages/StudyManagement/Goals',
-		  },
+			{
+				path: '/study-management/subjects',
+				name: 'subjects',
+				component: '@/pages/StudyManagement/Subjects',
+			},
+			{
+				path: '/study-management/progress',
+				name: 'progress',
+				component: '@/pages/StudyManagement/Progress',
+			},
+			{
+				path: '/study-management/goals',
+				name: 'goals',
+				component: '@/pages/StudyManagement/Goals',
+			},
 		],
-	  },
+	},
 	{
 		path: '/trochoidoanso',
 		name: 'Trò chơi đoán số',
 		component: '@/pages/Game',
 		icon: 'CalculatorOutlined',
-	  },
+	},
 
 	// DANH MUC HE THONG
 	// {
@@ -118,5 +155,4 @@
 	{
 		component: './exception/404',
 	},
-	
 ];

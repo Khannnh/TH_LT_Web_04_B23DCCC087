@@ -1,0 +1,100 @@
+/* Game.less */
+
+@import '~antd/dist/antd.less';
+
+.card-container {
+	max-width: 800px;
+	margin: auto;
+	padding: 20px;
+	text-align: center;
+	background: #fdfdfd;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+	color: #333;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.button-container {
+	display: flex;
+	gap: 15px;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.choices-button {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 120px;
+	height: 120px;
+	font-weight: bold;
+	font-size: 18px;
+	background: #fff;
+	border: none;
+	border-radius: 50%;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	transition: transform 0.2s;
+}
+
+.choices-button img {
+	width: 60px;
+	height: 60px;
+}
+
+.choices-button::before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	background: radial-gradient(circle, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 100%);
+	border-radius: 50%;
+	content: '';
+}
+
+.choices-button:hover {
+	transform: scale(1.1);
+}
+
+.rock {
+	border: 4px solid #3498db;
+}
+
+.paper {
+	border: 4px solid #23de61;
+}
+
+.scissors {
+	border: 4px solid #f1470f;
+}
+
+.result-container {
+	margin-top: 20px;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.result-text {
+	display: inline-block;
+	min-width: 150px;
+	padding: 10px;
+	border-radius: 8px;
+}
+
+.win {
+	color: #52c41a;
+}
+
+.lose {
+	color: #f5222d;
+}
+
+tie {
+	color: #faad14;
+}
