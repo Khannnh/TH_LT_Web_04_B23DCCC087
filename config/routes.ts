@@ -16,6 +16,38 @@
 		],
 	},
 	{
+		path: '/appointment-system',
+		name: 'appointmentSystem',
+		icon: 'CalendarOutlined', 
+		routes: [
+		  {
+			path: '/appointment-system/appointments',
+			name: 'appointments',
+			component: './AppointmentSystem/Appointments',
+		  },
+		  {
+			path: '/appointment-system/employees',
+			name: 'employees',
+			component: './AppointmentSystem/Employees',
+		  },
+		  {
+			path: '/appointment-system/services',
+			name: 'services', 
+			component: './AppointmentSystem/Services',
+		  },
+		  {
+			path: '/appointment-system/reviews',
+			name: 'reviews',
+			component: './AppointmentSystem/Reviews', 
+		  },
+		  {
+			path: '/appointment-system/statistics',
+			name: 'reports',
+			component: './AppointmentSystem/Statistics',
+		  }
+		]
+	},
+	{
 		path: '/question-bank',
 		name: 'questionbank',
 		icon: 'BookOutlined',
