@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Row, Col, message, Typography } from 'antd';
-import { ScissorOutlined, BorderOutlined, StopOutlined } from '@ant-design/icons';
+import './Game.less';
+import 'antd/dist/antd.less';
 
 const { Title, Text } = Typography;
+
+import keoImage from '../../assets/keo.png';
+import buaImage from '../../assets/bua.png';
+import baoImage from '../../assets/bao.png';
 
 interface GameResult {
   id: string;
@@ -50,12 +55,12 @@ const Game: React.FC = () => {
   const handlePlay = (choice: string) => {
     const computer = getComputerChoice();
     const result = determineWinner(choice, computer);
-    
+
     setPlayerChoice(choice);
     setComputerChoice(computer);
     setGameResult(result);
 
-    const gameResult: GameResult = {
+    const newGameResult: GameResult = {
       id: Date.now().toString(),
       playerChoice: choice,
       computerChoice: computer,
@@ -63,43 +68,69 @@ const Game: React.FC = () => {
       timestamp: new Date().toLocaleString(),
     };
 
-    saveToStorage([gameResult, ...history].slice(0, 10));
+    saveToStorage([newGameResult, ...history].slice(0, 10));
     message.success(`Kết quả: ${result}`);
   };
 
   return (
-    <Card title="Oẳn Tù Tì">
-      <Row gutter={[16, 16]} justify="center">
-        <Col span={24}>
-          <Title level={4} style={{ textAlign: 'center' }}>
+    <Card
+      title={
+        <Title
+          level={2}
+          style={{
+            fontWeight: 'bold',
+            fontSize: '48px',
+            margin: 0,
+            color: '#e60000',
+            borderBottom: '4px solid #e60000', // Thêm đường kẻ dưới tiêu đề
+            paddingBottom: '10px' // Thêm khoảng cách dưới tiêu đề
+          }}
+        >
+          Oẳn Tù Tì
+        </Title>
+      }
+      className="card-container"
+    >
+      <Row gutter={[80, 80]} justify="center">
+        <Col span={19}>
+          <Title level={4} style={{ textAlign: 'center', fontSize: '28px', fontWeight: 'bold', color: '#e60000', marginBottom: '-8px' }}>
             Chọn của bạn:
           </Title>
         </Col>
         <Col>
           <Button
             size="large"
-            icon={<ScissorOutlined />}
             onClick={() => handlePlay('Kéo')}
+            className="choices-button scissors"
           >
-            Kéo
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '0px' }}>
+              <img src={keoImage} alt="Kéo" style={{ width: '60px', height: '60px' }} />
+              <span style={{ marginTop: '8px', fontSize: '16px', fontWeight: 'bold' }}>Kéo</span>
+            </div>
           </Button>
         </Col>
         <Col>
           <Button
             size="large"
-            icon={<StopOutlined />}
             onClick={() => handlePlay('Búa')}
+            className="choices-button rock"
           >
-            Búa
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '0px' }}>
+              <img src={buaImage} alt="Búa" style={{ width: '60px', height: '60px' }} />
+              <span style={{ marginTop: '8px', fontSize: '16px', fontWeight: 'bold' }}>Búa</span>
+            </div>
           </Button>
         </Col>
         <Col>
           <Button
             size="large"
-            icon={<BorderOutlined />}
             onClick={() => handlePlay('Bao')}
+            className="choices-button paper"
           >
-            Bao
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '0px' }}>
+              <img src={baoImage} alt="Bao" style={{ width: '60px', height: '60px' }} />
+              <span style={{ marginTop: '8px', fontSize: '16px', fontWeight: 'bold' }}>Bao</span>
+            </div>
           </Button>
         </Col>
       </Row>
@@ -107,10 +138,17 @@ const Game: React.FC = () => {
       {playerChoice && (
         <Row gutter={[16, 16]} justify="center" style={{ marginTop: 24 }}>
           <Col span={24}>
-            <Text strong>Bạn chọn: {playerChoice}</Text>
+            <Text
+              strong
+              className={`result-text ${gameResult === 'Thắng' ? 'win' : gameResult === 'Thua' ? 'lose' : 'tie'}`}
+            >
+              Kết quả: {gameResult}
+            </Text>
           </Col>
           <Col span={24}>
-            <Text strong>Máy chọn: {computerChoice}</Text>
+            <Text strong style={{ fontSize: '28px', fontWeight: 'bold', color: '#e60000' }}>
+              {`Máy chọn: ${computerChoice}`}
+            </Text>
           </Col>
           <Col span={24}>
             <Text
