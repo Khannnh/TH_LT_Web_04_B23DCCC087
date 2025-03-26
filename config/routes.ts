@@ -19,44 +19,6 @@
 	///////////////////////////////////
 	// DEFAULT MENU
 	{
-		path: '/question-bank',
-		name: 'questionbank',
-		icon: 'BookOutlined',
-		routes: [
-			{
-				path: '/question-bank/subjects',
-				name: 'subjects',
-				component: './QuestionBank/Subjects',
-			},
-			{
-				path: '/question-bank/questions',
-				name: 'questions',
-				component: './QuestionBank/Questions',
-			},
-			{
-				path: '/question-bank/exams',
-				name: 'exams',
-				component: './QuestionBank/Exams',
-			},
-		],
-	},
-	{
-		path: '/rock-paper-scissors',
-		name: 'rockpaperscissors',
-		routes: [
-			{
-				path: '/rock-paper-scissors/game',
-				name: 'game',
-				component: './RockPaperScissors/Game',
-			},
-			{
-				path: '/rock-paper-scissors/history',
-				name: 'history',
-				component: './RockPaperScissors/History',
-			},
-		],
-	},
-	{
 		path: '/dashboard',
 		name: 'Dashboard',
 		component: './TrangChu',
@@ -102,7 +64,51 @@
 		component: '@/pages/Game',
 		icon: 'CalculatorOutlined',
 	},
-
+  {
+		path: '/question-bank',
+		name: 'questionbank',
+		icon: 'BookOutlined',
+		routes: [
+			{
+				path: '/question-bank/subjects',
+				name: 'subjects',
+				component: './QuestionBank/Subjects',
+			},
+			{
+				path: '/question-bank/questions',
+				name: 'questions',
+				component: './QuestionBank/Questions',
+			},
+			{
+				path: '/question-bank/exams',
+				name: 'exams',
+				component: './QuestionBank/Exams',
+			},
+		],
+	},
+	{
+		path: '/rock-paper-scissors',
+		name: 'rockpaperscissors',
+		routes: [
+			{
+				path: '/rock-paper-scissors/game',
+				name: 'game',
+				component: './RockPaperScissors/Game',
+			},
+			{
+				path: '/rock-paper-scissors/history',
+				name: 'history',
+				component: './RockPaperScissors/History',
+			},
+		],
+	},
+  {
+    path: '/classroom',
+    name: 'Quản lý phòng học',
+    icon: 'TeamOutlined',
+    component: '@/pages/Quản lí phòng học/ClassroomManagement',
+    exact: true,
+  },
 	// DANH MUC HE THONG
 	// {
 	// 	name: 'DanhMuc',

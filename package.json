@@ -97,7 +97,7 @@
     "socket.io-client": "^4.5.3",
     "styled-components": "^5.3.6",
     "tinymce": "^5.10.0",
-    "umi": "~3.5.0",
+    "umi": "3.5.41",
     "umi-serve": "~1.9.10",
     "xlsx": "^0.18.5"
   },
