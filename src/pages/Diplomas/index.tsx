@@ -3,9 +3,9 @@ import { Table, Button, Modal, Form, Input, DatePicker, Select, message } from '
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { Diploma, DiplomaField, GraduationDecision } from '@/types/diploma';
 import moment from 'moment';
-import useDiplomaModel from '@/models/diploma';
-import useDiplomaFieldModel from '@/models/diplomaField';
-import useGraduationDecisionModel from '@/models/graduationDecision';
+import { useDiplomaModel } from '@/models/diploma';
+import { useDiplomaFieldModel } from '@/models/diplomaField';
+import { useGraduationDecisionModel } from '@/models/graduationDecision';
 
 const { Option } = Select;
 

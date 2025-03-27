@@ -103,14 +103,6 @@
 		],
 	},
   {
-    path: '/classroom',
-    name: 'Quản lý phòng học',
-    icon: 'TeamOutlined',
-    component: '@/pages/Quản lí phòng học/ClassroomManagement',
-    exact: true,
-  },
-
-  {
 		path: '/diploma-books',
 		name: 'Quản lý sổ văn bằng',
 		icon: 'book',
