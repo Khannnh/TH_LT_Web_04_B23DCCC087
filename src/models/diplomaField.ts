@@ -8,8 +8,8 @@ export function useDiplomaFieldModel() {
 
   return {
     items: model.items,
-    addField: model.add,
-    updateField: model.update,
-    deleteField: model.remove,
+    add: model.add,
+    update: model.update,
+    remove: model.remove,
   };
 }

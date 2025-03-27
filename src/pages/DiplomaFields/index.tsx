@@ -7,7 +7,7 @@ import { useDiplomaFieldModel } from '@/models/diplomaField';
 const { Option } = Select;
 
 const DiplomaFields: React.FC = () => {
-  const { fields, addField, updateField, deleteField } = useDiplomaFieldModel();
+  const { items: fields, add, update, remove } = useDiplomaFieldModel();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingField, setEditingField] = useState<DiplomaField>();
@@ -15,6 +15,7 @@ const DiplomaFields: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
+      setLoading(true);
       const fieldData: DiplomaField = {
         id: editingField?.id || Date.now().toString(),
         name: values.name,
@@ -25,10 +26,10 @@ const DiplomaFields: React.FC = () => {
       };
 
       if (editingField) {
-        updateField(editingField.id, fieldData);
+        await update(editingField.id, fieldData);
         message.success('Cập nhật trường thông tin thành công');
       } else {
-        addField(fieldData);
+        await add(fieldData);
         message.success('Tạo trường thông tin thành công');
       }
       setModalVisible(false);
@@ -36,15 +37,20 @@ const DiplomaFields: React.FC = () => {
       setEditingField(undefined);
     } catch (error) {
       message.error('Không thể lưu trường thông tin');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      deleteField(id);
+      setLoading(true);
+      await remove(id);
       message.success('Xóa trường thông tin thành công');
     } catch (error) {
       message.error('Không thể xóa trường thông tin');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,6 +64,18 @@ const DiplomaFields: React.FC = () => {
       title: 'Kiểu dữ liệu',
       dataIndex: 'dataType',
       key: 'dataType',
+      render: (dataType: string) => {
+        switch (dataType) {
+          case 'String':
+            return 'Chuỗi ký tự';
+          case 'Number':
+            return 'Số';
+          case 'Date':
+            return 'Ngày tháng';
+          default:
+            return dataType;
+        }
+      },
     },
     {
       title: 'Bắt buộc',
@@ -157,7 +175,7 @@ const DiplomaFields: React.FC = () => {
             <Switch />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               {editingField ? 'Cập nhật' : 'Tạo'}
             </Button>
             <Button
