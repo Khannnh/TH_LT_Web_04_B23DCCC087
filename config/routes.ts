@@ -109,6 +109,49 @@
     component: '@/pages/Quản lí phòng học/ClassroomManagement',
     exact: true,
   },
+
+  {
+		path: '/diploma-books',
+		name: 'Quản lý sổ văn bằng',
+		icon: 'book',
+		routes: [
+			{
+				path: '/diploma-books',
+				component: './DiplomaBooks',
+				name: 'Danh sách sổ văn bằng',
+			},
+			{
+				path: '/diploma-books/:id',
+				component: './DiplomaBooks/Detail',
+				name: 'Chi tiết sổ văn bằng',
+				hideInMenu: true,
+			},
+		],
+	},
+	{
+		path: '/graduation-decisions',
+		name: 'Quản lý quyết định tốt nghiệp',
+		icon: 'file-text',
+		component: './GraduationDecisions',
+	},
+	{
+		path: '/diploma-fields',
+		name: 'Cấu hình biểu mẫu',
+		icon: 'setting',
+		component: './DiplomaFields',
+	},
+	{
+		path: '/diplomas',
+		name: 'Quản lý văn bằng',
+		icon: 'profile',
+		component: './Diplomas',
+	},
+	{
+		path: '/search',
+		name: 'Tra cứu văn bằng',
+		icon: 'search',
+		component: './Search',
+	},
 	// DANH MUC HE THONG
 	// {
 	// 	name: 'DanhMuc',
