@@ -57,7 +57,7 @@ export function useDiplomaModel() {
   };
 
   return {
-    diplomas: model.items,
+    items: model.items,
     addDiploma,
     updateDiploma,
     deleteDiploma: model.remove,

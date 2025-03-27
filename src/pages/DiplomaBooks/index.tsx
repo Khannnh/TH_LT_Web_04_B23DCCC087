@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Form, Input, message } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { DiplomaBook } from '@/models/diplomaBook';
+import type { DiplomaBook, Diploma, GraduationDecision } from '@/types/diploma';
 import { history } from 'umi';
 import { useDiplomaBookModel } from '@/models/diplomaBook';
 import { useGraduationDecisionModel } from '@/models/graduationDecision';
@@ -9,9 +9,9 @@ import { useDiplomaModel } from '@/models/diploma';
 import moment from 'moment';
 
 const DiplomaBooks: React.FC = () => {
-  const { books, addBook, deleteBook } = useDiplomaBookModel();
-  const { decisions, deleteDecision } = useGraduationDecisionModel();
-  const { diplomas, deleteDiploma } = useDiplomaModel();
+  const { items: books, addBook, deleteBook } = useDiplomaBookModel();
+  const { items: decisions, deleteDecision } = useGraduationDecisionModel();
+  const { items: diplomas, deleteDiploma } = useDiplomaModel();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -21,6 +21,9 @@ const DiplomaBooks: React.FC = () => {
       await addBook({
         year: values.year,
         totalDiplomas: 0,
+        name: `Sổ văn bằng ${values.year}`,
+        fieldId: 'default',
+        fieldName: 'Mặc định'
       });
       message.success('Tạo sổ văn bằng thành công');
       setModalVisible(false);
@@ -33,8 +36,8 @@ const DiplomaBooks: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       // Xóa tất cả văn bằng liên quan đến sổ văn bằng này
-      const relatedDiplomas = diplomas.filter(d => {
-        const decision = decisions.find(dec => dec.id === d.graduationDecisionId);
+      const relatedDiplomas = diplomas.filter((d: Diploma) => {
+        const decision = decisions.find((dec: GraduationDecision) => dec.id === d.graduationDecisionId);
         return decision && decision.diplomaBookId === id;
       });
 
@@ -43,7 +46,7 @@ const DiplomaBooks: React.FC = () => {
       }
 
       // Xóa tất cả quyết định tốt nghiệp liên quan
-      const relatedDecisions = decisions.filter(d => d.diplomaBookId === id);
+      const relatedDecisions = decisions.filter((d: GraduationDecision) => d.diplomaBookId === id);
       for (const decision of relatedDecisions) {
         await deleteDecision(decision.id);
       }
@@ -75,7 +78,7 @@ const DiplomaBooks: React.FC = () => {
           <Button
             type="link"
             onClick={() => {
-              history.push(`/diplomas?year=${record.year}`);
+              history.push(`/diploma-books/diplomas?year=${record.year}`);
             }}
           >
             Xem chi tiết

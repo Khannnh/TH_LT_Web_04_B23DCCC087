@@ -12,10 +12,10 @@ import { useDiplomaBookModel } from '@/models/diplomaBook';
 const { Option } = Select;
 
 const Diplomas: React.FC = () => {
-  const { diplomas, addDiploma, updateDiploma, deleteDiploma } = useDiplomaModel();
-  const { fields } = useDiplomaFieldModel();
-  const { decisions } = useGraduationDecisionModel();
-  const { books, updateBook } = useDiplomaBookModel();
+  const { items: diplomas, addDiploma, updateDiploma, deleteDiploma } = useDiplomaModel();
+  const { items: fields } = useDiplomaFieldModel();
+  const { items: decisions } = useGraduationDecisionModel();
+  const { items: books, updateBook } = useDiplomaBookModel();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingDiploma, setEditingDiploma] = useState<Diploma>();
@@ -45,9 +45,9 @@ const Diplomas: React.FC = () => {
 
     // Nếu có số quyết định, tự động lấy năm học tương ứng
     if (currentValues.decisionNumber) {
-      const decision = decisions.find(d => d.decisionNumber === currentValues.decisionNumber);
+      const decision = decisions?.find(d => d.id === currentValues.decisionNumber);
       if (decision) {
-        const book = books.find(b => b.id === decision.diplomaBookId);
+        const book = books?.find(b => b.id === decision.diplomaBookId);
         if (book) {
           currentValues.year = book.year;
         }
@@ -61,15 +61,15 @@ const Diplomas: React.FC = () => {
       params.append('decisionNumber', currentValues.decisionNumber);
     }
 
-    history.push(`/diplomas?${params.toString()}`);
+    history.push(`/diploma-books/diplomas?${params.toString()}`);
   };
 
   // Lọc văn bằng theo điều kiện
   const getFilteredDiplomas = () => {
     const values = filterForm.getFieldsValue();
 
-    return diplomas.filter(diploma => {
-      const decision = decisions.find(d => d.id === diploma.graduationDecisionId);
+    return diplomas?.filter(diploma => {
+      const decision = decisions?.find(d => d.id === diploma.graduationDecisionId);
       if (!decision) return false;
 
       // Lọc theo số quyết định
@@ -79,42 +79,42 @@ const Diplomas: React.FC = () => {
 
       // Lọc theo năm học
       if (values.year) {
-        const book = books.find(b => b.id === decision.diplomaBookId);
+        const book = books?.find(b => b.id === decision.diplomaBookId);
         if (!book || book.year !== Number(values.year)) {
           return false;
         }
       }
 
       return true;
-    });
+    }) || [];
   };
 
   // Lấy danh sách sổ văn bằng theo trường và năm học
   const getFilteredBooks = () => {
     const values = filterForm.getFieldsValue();
-    return books.filter(book => {
+    return books?.filter(book => {
       if (values.year && book.year !== Number(values.year)) {
         return false;
       }
       return true;
-    });
+    }) || [];
   };
 
   // Hàm xác định số thứ tự văn bằng mới
   const determineBookNumber = (graduationDecisionId: string): number => {
-    const decision = decisions.find(d => d.id === graduationDecisionId);
+    const decision = decisions?.find(d => d.id === graduationDecisionId);
     if (!decision) return 1;
 
-    const book = books.find(b => b.id === decision.diplomaBookId);
+    const book = books?.find(b => b.id === decision.diplomaBookId);
     if (!book) return 1;
 
     // Lấy danh sách văn bằng của cùng năm học
-    const diplomasInSameYear = diplomas.filter(diploma => {
-      const diplomaDecision = decisions.find(d => d.id === diploma.graduationDecisionId);
+    const diplomasInSameYear = diplomas?.filter(diploma => {
+      const diplomaDecision = decisions?.find(d => d.id === diploma.graduationDecisionId);
       if (!diplomaDecision) return false;
-      const diplomaBook = books.find(b => b.id === diplomaDecision.diplomaBookId);
+      const diplomaBook = books?.find(b => b.id === diplomaDecision.diplomaBookId);
       return diplomaBook?.year === book.year;
-    });
+    }) || [];
 
     // Nếu không có văn bằng nào trong năm học này, bắt đầu từ 1
     if (diplomasInSameYear.length === 0) return 1;
@@ -126,19 +126,19 @@ const Diplomas: React.FC = () => {
 
   // Hàm xác định số hiệu văn bằng mới
   const determineDiplomaNumber = (graduationDecisionId: string): string => {
-    const decision = decisions.find(d => d.id === graduationDecisionId);
+    const decision = decisions?.find(d => d.id === graduationDecisionId);
     if (!decision) return '1';
 
-    const book = books.find(b => b.id === decision.diplomaBookId);
+    const book = books?.find(b => b.id === decision.diplomaBookId);
     if (!book) return '1';
 
     // Lấy danh sách văn bằng của cùng năm học
-    const diplomasInSameYear = diplomas.filter(diploma => {
-      const diplomaDecision = decisions.find(d => d.id === diploma.graduationDecisionId);
+    const diplomasInSameYear = diplomas?.filter(diploma => {
+      const diplomaDecision = decisions?.find(d => d.id === diploma.graduationDecisionId);
       if (!diplomaDecision) return false;
-      const diplomaBook = books.find(b => b.id === diplomaDecision.diplomaBookId);
+      const diplomaBook = books?.find(b => b.id === diplomaDecision.diplomaBookId);
       return diplomaBook?.year === book.year;
-    });
+    }) || [];
 
     // Nếu không có văn bằng nào trong năm học này, bắt đầu từ 1
     if (diplomasInSameYear.length === 0) return '1';
@@ -169,7 +169,7 @@ const Diplomas: React.FC = () => {
         dateOfBirth: values.dateOfBirth.toDate(),
         graduationDecisionId: values.graduationDecisionId,
         fields: Object.entries(values.fields || {}).map(([fieldId, value]) => {
-          const field = fields.find(f => f.id === fieldId);
+          const field = fields?.find(f => f.id === fieldId);
           let typedValue: string | number | Date = value as string;
 
           if (field) {
@@ -202,9 +202,9 @@ const Diplomas: React.FC = () => {
         addDiploma(diplomaData);
 
         // Cập nhật số lượng văn bằng trong sổ
-        const decision = decisions.find(d => d.id === values.graduationDecisionId);
+        const decision = decisions?.find(d => d.id === values.graduationDecisionId);
         if (decision) {
-          const book = books.find(b => b.id === decision.diplomaBookId);
+          const book = books?.find(b => b.id === decision.diplomaBookId);
           if (book) {
             updateBook(book.id, {
               ...book,
@@ -225,11 +225,11 @@ const Diplomas: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const diploma = diplomas.find(d => d.id === id);
+      const diploma = diplomas?.find(d => d.id === id);
       if (diploma) {
-        const decision = decisions.find(d => d.id === diploma.graduationDecisionId);
+        const decision = decisions?.find(d => d.id === diploma.graduationDecisionId);
         if (decision) {
-          const book = books.find(b => b.id === decision.diplomaBookId);
+          const book = books?.find(b => b.id === decision.diplomaBookId);
           if (book) {
             // Cập nhật số lượng văn bằng trong sổ
             updateBook(book.id, {
@@ -279,7 +279,7 @@ const Diplomas: React.FC = () => {
       dataIndex: 'graduationDecisionId',
       key: 'graduationDecision',
       render: (graduationDecisionId: string) => {
-        const decision = decisions.find(d => d.id === graduationDecisionId);
+        const decision = decisions?.find(d => d.id === graduationDecisionId);
         return decision ? decision.decisionNumber : '';
       },
     },
@@ -360,12 +360,13 @@ const Diplomas: React.FC = () => {
             allowClear
             disabled={!!filterForm.getFieldValue('decisionNumber')}
           >
-            {Array.from(new Set(books.map(book => book.year)))
-              .sort()
+            {books?.map(book => book.year)
+              .filter((year, index, self) => self.indexOf(year) === index)
+              .sort((a, b) => b - a)
               .map(year => (
-                <Select.Option key={year} value={year}>
+                <Option key={year} value={year}>
                   {year}
-                </Select.Option>
+                </Option>
               ))}
           </Select>
         </Form.Item>
@@ -373,13 +374,20 @@ const Diplomas: React.FC = () => {
           <Select
             style={{ width: 200 }}
             allowClear
+            showSearch
+            optionFilterProp="children"
           >
-            {Array.from(new Set(decisions.map(d => d.decisionNumber)))
-              .map(number => (
-                <Select.Option key={number} value={number}>
-                  {number}
-                </Select.Option>
-              ))}
+            {decisions?.filter(d => {
+              const year = filterForm.getFieldValue('year');
+              if (!year) return true;
+              const book = books?.find(b => b.id === d.diplomaBookId);
+              return book && book.year === year;
+            })
+            .map(d => (
+              <Option key={d.id} value={d.decisionNumber}>
+                {d.decisionNumber}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
       </Form>
@@ -442,7 +450,7 @@ const Diplomas: React.FC = () => {
             ]}
           >
             <Select>
-              {decisions.map(decision => (
+              {decisions?.map(decision => (
                 <Option key={decision.id} value={decision.id}>
                   {decision.decisionNumber}
                 </Option>
@@ -450,7 +458,7 @@ const Diplomas: React.FC = () => {
             </Select>
           </Form.Item>
 
-          {fields.map(field => (
+          {fields?.map(field => (
             <Form.Item
               key={field.id}
               name={['fields', field.id]}

@@ -1,18 +1,13 @@
 import { BaseEntity, useBaseModel } from './base';
+import type { DiplomaField } from '@/types/diploma';
 
-export type FieldDataType = 'String' | 'Number' | 'Date';
-
-export interface DiplomaField extends BaseEntity {
-  name: string;
-  dataType: FieldDataType;
-  isRequired: boolean;
-}
+const STORAGE_KEY = 'diploma-fields';
 
 export function useDiplomaFieldModel() {
-  const model = useBaseModel<DiplomaField>('diplomaFields');
+  const model = useBaseModel<DiplomaField>(STORAGE_KEY);
 
   return {
-    fields: model.items,
+    items: model.items,
     addField: model.add,
     updateField: model.update,
     deleteField: model.remove,

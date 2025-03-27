@@ -102,48 +102,51 @@
 			},
 		],
 	},
+
   {
 		path: '/diploma-books',
 		name: 'Quản lý sổ văn bằng',
 		icon: 'book',
 		routes: [
 			{
-				path: '/diploma-books',
+				path: '/diploma-books/list',
 				component: './DiplomaBooks',
 				name: 'Danh sách sổ văn bằng',
 			},
 			{
-				path: '/diploma-books/:id',
+				path: '/diploma-books/detail/:id',
 				component: './DiplomaBooks/Detail',
 				name: 'Chi tiết sổ văn bằng',
 				hideInMenu: true,
 			},
+			{
+				path: '/diploma-books/graduation-decisions',
+				name: 'Quản lý quyết định tốt nghiệp',
+				icon: 'file-text',
+				component: './GraduationDecisions',
+			},
+			{
+				path: '/diploma-books/diploma-fields',
+				name: 'Cấu hình biểu mẫu',
+				icon: 'setting',
+				component: './DiplomaFields',
+			},
+			{
+				path: '/diploma-books/diplomas',
+				name: 'Quản lý văn bằng',
+				icon: 'profile',
+				component: './Diplomas',
+			},
+			{
+				path: '/diploma-books/search',
+				name: 'Tra cứu văn bằng',
+				icon: 'search',
+				component: './Search',
+			},
 		],
 	},
-	{
-		path: '/graduation-decisions',
-		name: 'Quản lý quyết định tốt nghiệp',
-		icon: 'file-text',
-		component: './GraduationDecisions',
-	},
-	{
-		path: '/diploma-fields',
-		name: 'Cấu hình biểu mẫu',
-		icon: 'setting',
-		component: './DiplomaFields',
-	},
-	{
-		path: '/diplomas',
-		name: 'Quản lý văn bằng',
-		icon: 'profile',
-		component: './Diplomas',
-	},
-	{
-		path: '/search',
-		name: 'Tra cứu văn bằng',
-		icon: 'search',
-		component: './Search',
-	},
+
+
 	// DANH MUC HE THONG
 	// {
 	// 	name: 'DanhMuc',

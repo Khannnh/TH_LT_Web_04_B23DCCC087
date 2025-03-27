@@ -1,15 +1,13 @@
 import { BaseEntity, useBaseModel } from './base';
+import type { DiplomaBook } from '@/types/diploma';
 
-export interface DiplomaBook extends BaseEntity {
-  year: number;
-  totalDiplomas: number;
-}
+const STORAGE_KEY = 'diploma-books';
 
 export function useDiplomaBookModel() {
-  const model = useBaseModel<DiplomaBook>('diplomaBooks');
+  const model = useBaseModel<DiplomaBook>(STORAGE_KEY);
 
   return {
-    books: model.items,
+    items: model.items,
     addBook: model.add,
     updateBook: model.update,
     deleteBook: model.remove,

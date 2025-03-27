@@ -95,3 +95,10 @@ export async function searchDiplomas(params: DiplomaSearchParams) {
     params,
   });
 }
+
+export async function updateSearchCount(graduationDecisionId: string) {
+  return request<{ success: boolean }>('/api/graduation-decisions/search-count', {
+    method: 'POST',
+    data: { graduationDecisionId },
+  });
+}

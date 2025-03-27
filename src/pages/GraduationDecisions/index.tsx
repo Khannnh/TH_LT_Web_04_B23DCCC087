@@ -10,8 +10,8 @@ import { useHistory } from 'react-router-dom';
 const { Option } = Select;
 
 const GraduationDecisions: React.FC = () => {
-  const { decisions, addDecision, updateDecision, deleteDecision } = useGraduationDecisionModel();
-  const { books } = useDiplomaBookModel();
+  const { items: decisions, addDecision, updateDecision, deleteDecision } = useGraduationDecisionModel();
+  const { items: books } = useDiplomaBookModel();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingDecision, setEditingDecision] = useState<GraduationDecision>();

@@ -62,7 +62,7 @@ const DiplomaBookDetail: React.FC = () => {
       title: 'Thao tác',
       key: 'action',
       render: (_: any, record: Diploma) => (
-        <Button type="link" onClick={() => history.push(`/diplomas/${record.id}`)}>
+        <Button type="link" onClick={() => history.push(`/diploma-books/diplomas/${record.id}`)}>
           Xem chi tiết
         </Button>
       ),
@@ -79,7 +79,7 @@ const DiplomaBookDetail: React.FC = () => {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => history.push(`/diplomas/create?bookId=${id}`)}
+          onClick={() => history.push(`/diploma-books/diplomas/create?bookId=${id}`)}
         >
           Thêm văn bằng mới
         </Button>
