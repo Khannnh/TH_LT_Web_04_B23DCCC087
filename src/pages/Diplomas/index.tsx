@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, DatePicker, Select, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { Diploma, DiplomaField, GraduationDecision } from '@/types/diploma';
+import type { Diploma, DiplomaField, GraduationDecision, DiplomaBook } from '@/types/diploma';
 import moment from 'moment';
 import { useDiplomaModel } from '@/models/diploma';
 import { useDiplomaFieldModel } from '@/models/diplomaField';
 import { useGraduationDecisionModel } from '@/models/graduationDecision';
+import { useLocation, useHistory } from 'react-router-dom';
+import { useDiplomaBookModel } from '@/models/diplomaBook';
 
 const { Option } = Select;
 
@@ -13,17 +15,155 @@ const Diplomas: React.FC = () => {
   const { diplomas, addDiploma, updateDiploma, deleteDiploma } = useDiplomaModel();
   const { fields } = useDiplomaFieldModel();
   const { decisions } = useGraduationDecisionModel();
+  const { books, updateBook } = useDiplomaBookModel();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingDiploma, setEditingDiploma] = useState<Diploma>();
-  const [form] = Form.useForm();
+  const [filterForm] = Form.useForm();
+  const [editForm] = Form.useForm();
+  const location = useLocation();
+  const history = useHistory();
+
+  // Khởi tạo giá trị filter từ URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const year = params.get('year');
+    const decisionNumber = params.get('decisionNumber');
+
+    if (year || decisionNumber) {
+      filterForm.setFieldsValue({
+        year: year ? Number(year) : undefined,
+        decisionNumber: decisionNumber || undefined
+      });
+    }
+  }, [location.search]);
+
+  // Xử lý khi thay đổi filter
+  const handleFilterChange = (changedValues: any) => {
+    const currentValues = filterForm.getFieldsValue();
+    const params = new URLSearchParams();
+
+    // Nếu có số quyết định, tự động lấy năm học tương ứng
+    if (currentValues.decisionNumber) {
+      const decision = decisions.find(d => d.decisionNumber === currentValues.decisionNumber);
+      if (decision) {
+        const book = books.find(b => b.id === decision.diplomaBookId);
+        if (book) {
+          currentValues.year = book.year;
+        }
+      }
+    }
+
+    if (currentValues.year) {
+      params.append('year', currentValues.year.toString());
+    }
+    if (currentValues.decisionNumber) {
+      params.append('decisionNumber', currentValues.decisionNumber);
+    }
+
+    history.push(`/diplomas?${params.toString()}`);
+  };
+
+  // Lọc văn bằng theo điều kiện
+  const getFilteredDiplomas = () => {
+    const values = filterForm.getFieldsValue();
+
+    return diplomas.filter(diploma => {
+      const decision = decisions.find(d => d.id === diploma.graduationDecisionId);
+      if (!decision) return false;
+
+      // Lọc theo số quyết định
+      if (values.decisionNumber && decision.decisionNumber !== values.decisionNumber) {
+        return false;
+      }
+
+      // Lọc theo năm học
+      if (values.year) {
+        const book = books.find(b => b.id === decision.diplomaBookId);
+        if (!book || book.year !== Number(values.year)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  };
+
+  // Lấy danh sách sổ văn bằng theo trường và năm học
+  const getFilteredBooks = () => {
+    const values = filterForm.getFieldsValue();
+    return books.filter(book => {
+      if (values.year && book.year !== Number(values.year)) {
+        return false;
+      }
+      return true;
+    });
+  };
+
+  // Hàm xác định số thứ tự văn bằng mới
+  const determineBookNumber = (graduationDecisionId: string): number => {
+    const decision = decisions.find(d => d.id === graduationDecisionId);
+    if (!decision) return 1;
+
+    const book = books.find(b => b.id === decision.diplomaBookId);
+    if (!book) return 1;
+
+    // Lấy danh sách văn bằng của cùng năm học
+    const diplomasInSameYear = diplomas.filter(diploma => {
+      const diplomaDecision = decisions.find(d => d.id === diploma.graduationDecisionId);
+      if (!diplomaDecision) return false;
+      const diplomaBook = books.find(b => b.id === diplomaDecision.diplomaBookId);
+      return diplomaBook?.year === book.year;
+    });
+
+    // Nếu không có văn bằng nào trong năm học này, bắt đầu từ 1
+    if (diplomasInSameYear.length === 0) return 1;
+
+    // Tìm số thứ tự lớn nhất và tăng thêm 1
+    const maxBookNumber = Math.max(...diplomasInSameYear.map(d => d.bookNumber));
+    return maxBookNumber + 1;
+  };
+
+  // Hàm xác định số hiệu văn bằng mới
+  const determineDiplomaNumber = (graduationDecisionId: string): string => {
+    const decision = decisions.find(d => d.id === graduationDecisionId);
+    if (!decision) return '1';
+
+    const book = books.find(b => b.id === decision.diplomaBookId);
+    if (!book) return '1';
+
+    // Lấy danh sách văn bằng của cùng năm học
+    const diplomasInSameYear = diplomas.filter(diploma => {
+      const diplomaDecision = decisions.find(d => d.id === diploma.graduationDecisionId);
+      if (!diplomaDecision) return false;
+      const diplomaBook = books.find(b => b.id === diplomaDecision.diplomaBookId);
+      return diplomaBook?.year === book.year;
+    });
+
+    // Nếu không có văn bằng nào trong năm học này, bắt đầu từ 1
+    if (diplomasInSameYear.length === 0) return '1';
+
+    // Tìm số hiệu văn bằng lớn nhất và tăng thêm 1
+    const maxDiplomaNumber = Math.max(...diplomasInSameYear.map(d => parseInt(d.diplomaNumber)));
+    return (maxDiplomaNumber + 1).toString();
+  };
 
   const handleSubmit = async (values: any) => {
     try {
+      // Xác định số thứ tự văn bằng mới
+      const bookNumber = editingDiploma
+        ? editingDiploma.bookNumber
+        : determineBookNumber(values.graduationDecisionId);
+
+      // Xác định số hiệu văn bằng mới
+      const diplomaNumber = editingDiploma
+        ? values.diplomaNumber
+        : determineDiplomaNumber(values.graduationDecisionId);
+
       const diplomaData: Diploma = {
         id: editingDiploma?.id || Date.now().toString(),
-        bookNumber: editingDiploma?.bookNumber || diplomas.length + 1,
-        diplomaNumber: values.diplomaNumber,
+        bookNumber,
+        diplomaNumber,
         studentId: values.studentId,
         fullName: values.fullName,
         dateOfBirth: values.dateOfBirth.toDate(),
@@ -58,11 +198,25 @@ const Diplomas: React.FC = () => {
         updateDiploma(editingDiploma.id, diplomaData);
         message.success('Cập nhật văn bằng thành công');
       } else {
+        // Thêm văn bằng mới
         addDiploma(diplomaData);
+
+        // Cập nhật số lượng văn bằng trong sổ
+        const decision = decisions.find(d => d.id === values.graduationDecisionId);
+        if (decision) {
+          const book = books.find(b => b.id === decision.diplomaBookId);
+          if (book) {
+            updateBook(book.id, {
+              ...book,
+              totalDiplomas: book.totalDiplomas + 1
+            });
+          }
+        }
+
         message.success('Tạo văn bằng thành công');
       }
       setModalVisible(false);
-      form.resetFields();
+      editForm.resetFields();
       setEditingDiploma(undefined);
     } catch (error) {
       message.error('Không thể lưu văn bằng');
@@ -71,6 +225,21 @@ const Diplomas: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
+      const diploma = diplomas.find(d => d.id === id);
+      if (diploma) {
+        const decision = decisions.find(d => d.id === diploma.graduationDecisionId);
+        if (decision) {
+          const book = books.find(b => b.id === decision.diplomaBookId);
+          if (book) {
+            // Cập nhật số lượng văn bằng trong sổ
+            updateBook(book.id, {
+              ...book,
+              totalDiplomas: Math.max(0, book.totalDiplomas - 1)
+            });
+          }
+        }
+      }
+
       deleteDiploma(id);
       message.success('Xóa văn bằng thành công');
     } catch (error) {
@@ -124,7 +293,7 @@ const Diplomas: React.FC = () => {
             icon={<EditOutlined />}
             onClick={() => {
               setEditingDiploma(record);
-              form.setFieldsValue({
+              editForm.setFieldsValue({
                 ...record,
                 dateOfBirth: moment(record.dateOfBirth),
                 fields: record.fields.reduce((acc, field) => ({
@@ -171,7 +340,7 @@ const Diplomas: React.FC = () => {
           icon={<PlusOutlined />}
           onClick={() => {
             setEditingDiploma(undefined);
-            form.resetFields();
+            editForm.resetFields();
             setModalVisible(true);
           }}
         >
@@ -179,9 +348,45 @@ const Diplomas: React.FC = () => {
         </Button>
       </div>
 
+      <Form
+        form={filterForm}
+        layout="inline"
+        style={{ marginBottom: 16 }}
+        onValuesChange={handleFilterChange}
+      >
+        <Form.Item name="year" label="Năm học">
+          <Select
+            style={{ width: 120 }}
+            allowClear
+            disabled={!!filterForm.getFieldValue('decisionNumber')}
+          >
+            {Array.from(new Set(books.map(book => book.year)))
+              .sort()
+              .map(year => (
+                <Select.Option key={year} value={year}>
+                  {year}
+                </Select.Option>
+              ))}
+          </Select>
+        </Form.Item>
+        <Form.Item name="decisionNumber" label="Số quyết định">
+          <Select
+            style={{ width: 200 }}
+            allowClear
+          >
+            {Array.from(new Set(decisions.map(d => d.decisionNumber)))
+              .map(number => (
+                <Select.Option key={number} value={number}>
+                  {number}
+                </Select.Option>
+              ))}
+          </Select>
+        </Form.Item>
+      </Form>
+
       <Table
         columns={columns}
-        dataSource={diplomas}
+        dataSource={getFilteredDiplomas()}
         rowKey="id"
         loading={loading}
       />
@@ -197,7 +402,7 @@ const Diplomas: React.FC = () => {
         width={800}
       >
         <Form
-          form={form}
+          form={editForm}
           onFinish={handleSubmit}
           layout="vertical"
         >
@@ -232,7 +437,9 @@ const Diplomas: React.FC = () => {
           <Form.Item
             name="graduationDecisionId"
             label="Quyết định tốt nghiệp"
-            rules={[{ required: true, message: 'Vui lòng chọn quyết định tốt nghiệp' }]}
+            rules={[
+              { required: true, message: 'Vui lòng chọn quyết định tốt nghiệp' }
+            ]}
           >
             <Select>
               {decisions.map(decision => (

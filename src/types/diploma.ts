@@ -1,6 +1,9 @@
 export interface DiplomaBook {
   id: string;
+  name: string;
   year: number;
+  fieldId: string;
+  fieldName: string;
   totalDiplomas: number;
   createdAt: Date;
   updatedAt: Date;

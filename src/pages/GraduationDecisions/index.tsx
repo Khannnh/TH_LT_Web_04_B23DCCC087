@@ -5,6 +5,7 @@ import type { GraduationDecision, DiplomaBook } from '@/types/diploma';
 import moment from 'moment';
 import { useGraduationDecisionModel } from '@/models/graduationDecision';
 import { useDiplomaBookModel } from '@/models/diplomaBook';
+import { useHistory } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -15,6 +16,7 @@ const GraduationDecisions: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingDecision, setEditingDecision] = useState<GraduationDecision>();
   const [form] = Form.useForm();
+  const history = useHistory();
 
   const handleSubmit = async (values: any) => {
     try {
@@ -37,8 +39,12 @@ const GraduationDecisions: React.FC = () => {
       setModalVisible(false);
       form.resetFields();
       setEditingDecision(undefined);
-    } catch (error) {
-      message.error('Không thể lưu quyết định');
+    } catch (error: any) {
+      if (error.message === 'Số quyết định đã tồn tại') {
+        message.error('Số quyết định đã tồn tại');
+      } else {
+        message.error('Không thể lưu quyết định');
+      }
     }
   };
 

@@ -1,29 +1,58 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Form, Input, message } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { DiplomaBook } from '@/models/diplomaBook';
 import { history } from 'umi';
 import { useDiplomaBookModel } from '@/models/diplomaBook';
+import { useGraduationDecisionModel } from '@/models/graduationDecision';
+import { useDiplomaModel } from '@/models/diploma';
 import moment from 'moment';
 
 const DiplomaBooks: React.FC = () => {
-  const { books, addBook } = useDiplomaBookModel();
+  const { books, addBook, deleteBook } = useDiplomaBookModel();
+  const { decisions, deleteDecision } = useGraduationDecisionModel();
+  const { diplomas, deleteDiploma } = useDiplomaModel();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
 
   const handleCreateBook = async (values: { year: number }) => {
     try {
-      const newBook = {
+      await addBook({
         year: values.year,
         totalDiplomas: 0,
-      };
-      addBook(newBook);
+      });
       message.success('Tạo sổ văn bằng thành công');
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
       message.error('Không thể tạo sổ văn bằng');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      // Xóa tất cả văn bằng liên quan đến sổ văn bằng này
+      const relatedDiplomas = diplomas.filter(d => {
+        const decision = decisions.find(dec => dec.id === d.graduationDecisionId);
+        return decision && decision.diplomaBookId === id;
+      });
+
+      for (const diploma of relatedDiplomas) {
+        await deleteDiploma(diploma.id);
+      }
+
+      // Xóa tất cả quyết định tốt nghiệp liên quan
+      const relatedDecisions = decisions.filter(d => d.diplomaBookId === id);
+      for (const decision of relatedDecisions) {
+        await deleteDecision(decision.id);
+      }
+
+      // Xóa sổ văn bằng
+      await deleteBook(id);
+      message.success('Xóa sổ văn bằng và dữ liệu liên quan thành công');
+    } catch (error) {
+      message.error('Không thể xóa sổ văn bằng và dữ liệu liên quan');
     }
   };
 
@@ -34,7 +63,7 @@ const DiplomaBooks: React.FC = () => {
       key: 'year',
     },
     {
-      title: 'Số văn bằng',
+      title: 'Tổng số văn bằng',
       dataIndex: 'totalDiplomas',
       key: 'totalDiplomas',
     },
@@ -42,9 +71,24 @@ const DiplomaBooks: React.FC = () => {
       title: 'Thao tác',
       key: 'action',
       render: (_: any, record: DiplomaBook) => (
-        <Button type="link" onClick={() => history.push(`/diploma-books/${record.id}`)}>
-          Xem chi tiết
-        </Button>
+        <>
+          <Button
+            type="link"
+            onClick={() => {
+              history.push(`/diplomas?year=${record.year}`);
+            }}
+          >
+            Xem chi tiết
+          </Button>
+          <Button
+            type="link"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.id)}
+          >
+            Xóa
+          </Button>
+        </>
       ),
     },
   ];
@@ -57,7 +101,7 @@ const DiplomaBooks: React.FC = () => {
           icon={<PlusOutlined />}
           onClick={() => setModalVisible(true)}
         >
-          Mở sổ mới
+          Thêm sổ văn bằng mới
         </Button>
       </div>
 
