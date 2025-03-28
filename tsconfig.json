@@ -37,6 +37,6 @@
 		".prettierrc.js",
 		"mock/*",
 		"typings.d.ts"
-	],
+, "../base-web-umi/src/components/StaffForm", "../base-web-umi/src/models/useStaff.ts", "../base-web-umi/src/pages/StaffManagement", "../base-web-umi/src/services/staff.ts", "../base-web-umi/src/models/staff.ts"	],
 	"exclude": ["node_modules", "build", "dist", "scripts", "src/.umi/*", "webpack", "jest"]
 }

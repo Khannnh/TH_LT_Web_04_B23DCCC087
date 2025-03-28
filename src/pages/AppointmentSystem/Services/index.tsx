@@ -5,7 +5,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import type { Service } from '@/models/service';
-import { getServices, createService, updateService, deleteService } from 'd:/code/basewebumiTH/src/services/service';
+import { getServices, createService, updateService, deleteService } from '@/services/service';
 import ServiceForm from '@/components/ServiceForm';
 import styles from './index.less';
 
@@ -146,12 +146,12 @@ const ServicesPage: React.FC = () => {
         <ProTable<Service>
           actionRef={actionRef}
           columns={columns}
-          request={async (params) => {
-            const response = await getServices(params);
+          request={async () => {
+            const response = await getServices();
             return {
-              data: response.data,
+              data: response,
               success: true,
-              total: response.total,
+              total: response.length,
             };
           }}
           rowKey="id"

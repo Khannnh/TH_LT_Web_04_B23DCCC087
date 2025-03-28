@@ -16,6 +16,39 @@
 		],
 	},
 	{
+		path: '/diploma',
+		name: 'Quản lý văn bằng',
+		icon: 'FileProtectOutlined',
+		routes: [
+		  {
+			path: '/diploma/books',
+			name: 'Sổ văn bằng',
+			component: './DiplomaManagement/Books',
+		  },
+		  {
+			path: '/diploma/decisions',
+			name: 'Quyết định tốt nghiệp',
+			component: './DiplomaManagement/Decisions',
+		  },
+		  {
+			path: '/diploma/templates',
+			name: 'Cấu hình biểu mẫu',
+			component: './DiplomaManagement/Templates',
+		  },
+		  {
+			path: '/diploma/list',
+			name: 'Danh sách văn bằng',
+			component: './DiplomaManagement/Diplomas',
+		  },
+		  {
+			path: '/diploma/search',
+			name: 'Tra cứu văn bằng',
+			component: './DiplomaManagement/Search',
+		  },
+		],
+	},
+	
+	{
 		path: '/appointment-system',
 		name: 'appointmentSystem',
 		icon: 'CalendarOutlined', 

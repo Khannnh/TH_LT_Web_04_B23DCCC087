@@ -1,37 +1,28 @@
 import { request } from 'umi';
+import type { Service } from '@/models/service';
 
-export interface Service {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  duration: number;
-  status: 'active' | 'inactive';
-}
-
-export async function getServices(params?: Record<string, any>) {
-  return request<{ data: API.Service[] }>('/api/services', {
+export const getServices = async (): Promise<Service[]> => {
+  return request<{ data: Service[] }>('/api/services', {
     method: 'GET',
-    params,
-  });
-}
+  }).then(response => response.data);
+};
 
-export async function createService(data: Partial<API.Service>) {
-  return request<{ data: API.Service }>('/api/services', {
+export const createService = async (data: Omit<Service, 'id'>): Promise<Service> => {
+  return request<{ data: Service }>('/api/services', {
     method: 'POST',
     data,
-  });
-}
+  }).then(response => response.data);
+};
 
-export async function updateService(id: string, data: Partial<API.Service>) {
-  return request<{ data: API.Service }>(`/api/services/${id}`, {
+export const updateService = async (id: string, data: Partial<Service>): Promise<Service> => {
+  return request<{ data: Service }>(`/api/services/${id}`, {
     method: 'PUT',
     data,
-  });
-}
+  }).then(response => response.data);
+};
 
-export async function deleteService(id: string) {
+export const deleteService = async (id: string): Promise<void> => {
   return request<{ success: boolean }>(`/api/services/${id}`, {
     method: 'DELETE',
-  });
-}
+  }).then(() => {});
+};

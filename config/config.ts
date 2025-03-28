@@ -64,4 +64,13 @@ export default defineConfig({
 		}
 		return result;
 	}, {}),
+	cssLoader: {
+		modules: {
+			auto: true,
+			localIdentName: '[local]___[hash:base64:5]'
+		}
+	},
+	lessLoader: {
+		javascriptEnabled: true
+	},
 });

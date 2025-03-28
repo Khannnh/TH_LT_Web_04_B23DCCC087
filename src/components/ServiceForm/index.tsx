@@ -48,7 +48,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
         <InputNumber
           min={0}
           formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+          parser={(value) => (value ? value.replace(/\$\s?|(,*)/g, '') : '')}
           style={{ width: '100%' }}
         />
       </Form.Item>
@@ -77,7 +77,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
 
       {initialValues?.image && (
         <div className={styles.imagePreview}>
-          <img src={initialValues.image} alt={initialValues.name} />
+          <img key={initialValues.image} src={initialValues.image} alt={initialValues.name} />
         </div>
       )}
 
