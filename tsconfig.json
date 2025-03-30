@@ -18,10 +18,11 @@
 		"experimentalDecorators": true,
 		"strict": true,
 		"paths": {
-			"@/*": ["./src/*"],
+			"@/*": ["src/*"],
 			"@@/*": ["./src/.umi/*"],
 			"react": ["./node_modules/@types/react"]
-		}
+		},
+		"typeRoots": ["./src/types", "./node_modules/@types"]
 	},
 	"include": [
 		"mock/**/*",
@@ -34,7 +35,8 @@
 		".eslintrc.js",
 		".stylelintrc.js",
 		".prettierrc.js",
-		"mock/*"
-	],
+		"mock/*",
+		"typings.d.ts"
+, "../base-web-umi/src/components/StaffForm", "../base-web-umi/src/models/useStaff.ts", "../base-web-umi/src/pages/StaffManagement", "../base-web-umi/src/services/staff.ts", "../base-web-umi/src/models/staff.ts"	],
 	"exclude": ["node_modules", "build", "dist", "scripts", "src/.umi/*", "webpack", "jest"]
 }
