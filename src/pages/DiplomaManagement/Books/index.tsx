@@ -21,7 +21,14 @@ const DiplomaBookPage: React.FC = () => {
       setModalVisible(false);
       actionRef.current?.reload();
     } catch (error) {
-      message.error('Tạo sổ văn bằng thất bại');
+      // Xử lý lỗi và hiển thị thông báo lỗi
+      if (error.message === 'Tên sổ đã tồn tại') {
+        message.error('Tên sổ này đã tồn tại, vui lòng chọn tên khác!');
+      } else if (error.message === 'Năm của sổ đã tồn tại') {
+        message.error('Năm của sổ này đã tồn tại, vui lòng chọn năm khác!');
+      } else {
+        message.error('Tạo sổ văn bằng thất bại');
+      }
     }
     setLoading(false);
   };
@@ -34,10 +41,6 @@ const DiplomaBookPage: React.FC = () => {
     {
       title: 'Tên sổ',
       dataIndex: 'name',
-    },
-    {
-      title: 'Số hiện tại',
-      dataIndex: 'currentSequence',
     },
     // ...other columns
   ];

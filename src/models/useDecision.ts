@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { message } from 'antd';
-import type { GraduationDecision } from './types';
+import type { GraduationDecision } from './type';
 import { graduationDecisionService } from '@/services/diploma';
 
 export default function useDecision() {

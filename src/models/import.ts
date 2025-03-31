@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+//file hỗ trợ import file dữ liệu kiểu excel
 export default () => {
 	const [startLine, setStartLine] = useState<number>(0);
 	const [headLine, setHeadLine] = useState<Record<string, string>>(); // A: "Mã"

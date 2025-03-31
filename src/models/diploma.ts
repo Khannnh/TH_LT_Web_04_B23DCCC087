@@ -51,4 +51,5 @@ export interface DiplomaBook {    //sổ văn bằng
     studentId?: string;
     fullName?: string;
     birthDate?: string;
+    //Dấu ? trong TypeScript được sử dụng để đánh dấu một trường là tùy chọn.
   }

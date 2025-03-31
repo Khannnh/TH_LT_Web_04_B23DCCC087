@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { message } from 'antd';
-import type { DiplomaBook } from './types';
+import type { DiplomaBook } from './type';
 import { diplomaBookService } from '@/services/diploma';
 
 export default function useDiplomaBook() {

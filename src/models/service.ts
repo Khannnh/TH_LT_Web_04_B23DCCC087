@@ -9,3 +9,5 @@ export interface Service {
     duration: number; // in minutes
     status: 'active' | 'inactive';
   }
+  //ko trong phạm vi TH4
+  

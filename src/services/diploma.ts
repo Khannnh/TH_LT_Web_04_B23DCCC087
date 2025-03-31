@@ -5,7 +5,7 @@ import type {
   FormField,
   Diploma,
   SearchCriteria 
-} from '@/models/diploma';
+} from '@/models/diploma'; //gọi lại các interface
 
 const STORAGE_KEYS = {
   BOOKS: 'diploma_books',
@@ -29,6 +29,19 @@ export const diplomaBookService = {
 
   create: (book: Omit<DiplomaBook, 'id' | 'currentSequence' | 'createdAt' | 'updatedAt'>) => {
     const books = diplomaBookService.getAll();
+
+    // Kiểm tra trùng tên sổ
+    const isDuplicateName = books.some(existingBook => existingBook.name === book.name);
+    if (isDuplicateName) {
+      throw new Error('Tên sổ đã tồn tại');
+    }
+
+    // Kiểm tra trùng năm
+    const isDuplicateYear = books.some(existingBook => existingBook.year === book.year);
+    if (isDuplicateYear) {
+      throw new Error('Năm của sổ đã tồn tại');
+    }
+
     const newBook: DiplomaBook = {
       ...book,
       id: Date.now().toString(),
@@ -36,9 +49,11 @@ export const diplomaBookService = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
+
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify([...books, newBook]));
     return newBook;
   },
+
 
   update: (id: string, data: Partial<DiplomaBook>): DiplomaBook => {
     const books = diplomaBookService.getAll();
