@@ -1,5 +1,5 @@
 export interface DiplomaBook {
-    id: string;
+    //id: string;     ko cần id vì mỗi một năm chỉ có 1 sổ văn bằng
     year: number;
     name: string;
     currentSequence: number;

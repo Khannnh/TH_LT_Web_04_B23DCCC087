@@ -38,34 +38,39 @@
 	},
 
 	{
-		path: '/diploma',
-		name: 'Quản lý văn bằng',
-		icon: 'FileProtectOutlined',
+		path: '/diploma', //routes cha
+		name: 'Quản lý văn bằng',//tên hiển thị ở giao diện
+		icon: 'BookOutlined',
 		routes: [
 		  {
 			path: '/diploma/books',
-			name: 'Sổ văn bằng',
-			component: './DiplomaManagement/Books',
+			name: 'Sổ văn bằng',//tên hiển thị ở giao diện
+			component: './DiplomaManagement/Books', 
+			//component trong page có folder DiplomaManagement
 		  },
 		  {
 			path: '/diploma/decisions',
-			name: 'Quyết định tốt nghiệp',
+			name: 'Quyết định tốt nghiệp',//tên hiển thị ở giao diện
 			component: './DiplomaManagement/Decisions',
+			//component trong page có folder DiplomaManagement
 		  },
 		  {
 			path: '/diploma/templates',
-			name: 'Cấu hình biểu mẫu',
+			name: 'Cấu hình biểu mẫu phụ lục văn bằng',//tên hiển thị ở giao diện
 			component: './DiplomaManagement/Templates',
+			//component trong page có folder DiplomaManagement
 		  },
 		  {
 			path: '/diploma/list',
-			name: 'Danh sách văn bằng',
+			name: 'Danh sách văn bằng',//tên hiển thị ở giao diện
 			component: './DiplomaManagement/Diplomas',
+			//component trong page có folder DiplomaManagement
 		  },
 		  {
-			path: '/diploma/search',
-			name: 'Tra cứu văn bằng',
+			path: '/diploma/search',  //diploma là nhánh cha rồi chia ra các nhánh con
+			name: 'Tra cứu văn bằng', //tên hiển thị ở giao diện
 			component: './DiplomaManagement/Search',
+			//component trong page có folder DiplomaManagement
 		  },
 		],
 	},

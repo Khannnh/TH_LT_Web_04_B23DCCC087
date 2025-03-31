@@ -65,12 +65,17 @@ export default defineConfig({
 		return result;
 	}, {}),
 	cssLoader: {
-		modules: {
+		modules: {	 //Bật CSS Modules tự động cho các tệp .module.css hoặc .module.less
 			auto: true,
 			localIdentName: '[local]___[hash:base64:5]'
+			/*Tạo tên class tự động để tránh xung đột
+			 với các class khác trong dự án
+			 Thêm một hash ngẫu nhiên 5 ký tự để đảm bảo tính duy nhất*/
 		}
-	},
+	},				//css module cục bộ giúp tránh trùng tên class 
 	lessLoader: {
 		javascriptEnabled: true
 	},
 });
+//Toàn cục: Ai cũng có thể sử dụng, dễ bị xung đột.
+//Cục bộ: Chỉ component của mình dùng, không ảnh hưởng người khác.
