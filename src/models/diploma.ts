@@ -17,6 +17,7 @@ export interface DiplomaBook {    //sổ văn bằng
     searchCount: number; //sổ lượt tra cứu quyết định tốt nghiệp
     createdAt: string;
     updatedAt: string;
+    year: number;//năm của quyết định tốt nghiệp
   }
   
   export interface FormField { //Cấu Hình Biểu Mẫu Phụ Lục Văn Bằng

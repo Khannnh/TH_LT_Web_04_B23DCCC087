@@ -101,15 +101,41 @@ export const graduationDecisionService = {
     return decisions.find(decision => decision.id === id);
   },
 
-  create: (decision: Omit<GraduationDecision, 'id' | 'searchCount' | 'createdAt' | 'updatedAt'>) => {
+  create: (decision: Omit<GraduationDecision, 'id' | 'createdAt' 
+    | 'updatedAt' | 'decisionNumber' | 'summary' | 'issueDate'> & {
+    bookId: string;
+    decisionNumber: string;
+    summary: string;
+    issueDate: string;
+
+  }) => {
     const decisions = graduationDecisionService.getAll();
+    const books = diplomaBookService.getAll();
+    const book = books.find(b => b.id === decision.bookId);
+    if (!book) throw new Error('Sổ văn bằng không tồn tại');
+
+  // Lưu trữ năm của sổ văn bằng trong quyết định
+  const bookYear = book.year;
+
+   // Dùng giá trị decisionNumber từ người dùng
+   const formattedDecisionNumber = `QĐ-${book.year}-${decision.decisionNumber}`;
+    
+  const newSequence = book.currentSequence ;
+  book.currentSequence = newSequence;
+  diplomaBookService.update(book.id, { currentSequence: newSequence });
+    
     const newDecision: GraduationDecision = {
       ...decision,
-      id: Date.now().toString(),
-      searchCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      id: Date.now().toString(), // Tạo id tự động bằng timestamp
+      decisionNumber: formattedDecisionNumber,
+      /*nhất định phải là decisionNumber : formattedDecisionNumber vì 
+      decisionNumber cố định trong interface*/
+      createdAt: new Date().toISOString(), // Ngày tạo quyết định
+      updatedAt: new Date().toISOString(),// Ngày cập nhật quyết định
+      year: bookYear, // Lưu trữ năm của sổ văn bằng
     };
+    
+    // Lưu quyết định mới vào localStorage
     localStorage.setItem(STORAGE_KEYS.DECISIONS, JSON.stringify([...decisions, newDecision]));
     return newDecision;
   },
@@ -118,16 +144,30 @@ export const graduationDecisionService = {
     const decisions = graduationDecisionService.getAll();
     const index = decisions.findIndex(decision => decision.id === id);
     if (index === -1) throw new Error('Decision not found');
-
+  
+    const decisionToUpdate = decisions[index];
+    const book = diplomaBookService.getAll().find(b => b.year === decisionToUpdate.year); // Lấy thông tin sổ văn bằng từ năm quyết định cũ
+    if (!book) throw new Error('Sổ văn bằng không tồn tại');
+  
+    // Nếu số quyết định không thay đổi (hoặc không có trong data cập nhật), ta vẫn format lại nó
+    const newDecisionNumber = data.decisionNumber
+      ? `QĐ-${book.year}-${data.decisionNumber}`  // Dùng decisionNumber mới nếu có
+      : `QĐ-${book.year}-${decisionToUpdate.decisionNumber}`;  // Giữ nguyên decisionNumber nếu không có gì thay đổi
+  
     const updatedDecision = {
-      ...decisions[index],
+      ...decisionToUpdate,
       ...data,
-      updatedAt: new Date().toISOString()
+      decisionNumber: newDecisionNumber,  // Cập nhật lại số quyết định
+      updatedAt: new Date().toISOString(), // Ngày cập nhật quyết định
     };
+  
     decisions[index] = updatedDecision;
+  
+    // Lưu quyết định đã cập nhật vào localStorage
     localStorage.setItem(STORAGE_KEYS.DECISIONS, JSON.stringify(decisions));
     return updatedDecision;
   },
+  
 
   delete: (id: string): void => {
     const decisions = graduationDecisionService.getAll();
@@ -146,6 +186,7 @@ export const graduationDecisionService = {
     }
   }
 };
+
 
 // Form field service
 export const formFieldService = {
