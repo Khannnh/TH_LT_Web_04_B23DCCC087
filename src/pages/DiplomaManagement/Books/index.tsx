@@ -122,7 +122,7 @@ const DiplomaBookPage: React.FC = () => {
 
         <Modal
           title={editingBook ? 'Cập nhật sổ văn bằng' : 'Thêm sổ văn bằng mới'}
-          open={modalVisible}
+          visible={modalVisible} 
           onCancel={() => {
             setModalVisible(false);
             setEditingBook(null);
