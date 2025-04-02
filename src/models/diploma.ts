@@ -39,7 +39,6 @@ export interface DiplomaBook {    //sổ văn bằng
     fullName: string;
     birthDate: string;
     fieldValues: Record<string, string | number | Date>;
-
     //key được lưu trữ dạng string 
     //value có thể là 1 trong 3 kiểu dữ liệu
     createdAt: string;

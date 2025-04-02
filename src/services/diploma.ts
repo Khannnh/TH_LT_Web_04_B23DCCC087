@@ -241,25 +241,61 @@ export const diplomaService = {
     const diplomas = diplomaService.getAll();
     return diplomas.find(diploma => diploma.id === id);
   },
-  create: async (diploma: Omit<Diploma, 'id' | 'sequenceNumber' | 'createdAt' | 'updatedAt'>) => {
-    const diplomas = diplomaService.getAll();
-    const book = await diplomaBookService.getById(diploma.bookId);
-    if (!book) throw new Error('Book not found');
-
-    const sequenceNumber = await diplomaBookService.incrementSequence(diploma.bookId);
+  create: (diploma: Omit<Diploma, 'id' | 'sequenceNumber' | 'diplomaNumber' | 'createdAt' | 'updatedAt'>) => {
+    const diplomas: Diploma[] = diplomaService.getAll();
     
+    // Lấy tất cả dữ liệu từ DIPLOMAS, nhưng chỉ lọc các book (DiplomaBook)
+    const allData = JSON.parse(localStorage.getItem(STORAGE_KEYS.DIPLOMAS) || '[]');
+    const books: DiplomaBook[] = allData.filter((item: any) => 'currentSequence' in item); // Lọc các book
+
+    console.log('All data in localStorage:', allData);
+    console.log('Books:', books);
+
+    // Tìm sổ văn bằng theo bookId
+    const book = books.find((b: DiplomaBook) => b.id === diploma.bookId);
+    if (!book) {
+        console.error('Book not found!');
+        throw new Error('Sổ văn bằng không tồn tại');
+    }
+
+    console.log('Found book:', book);
+
+    // Tăng số vào sổ
+    book.currentSequence += 1;
+    console.log('Updated book sequence:', book.currentSequence);
+  
+    // Định dạng số vào sổ
+    const formattedSequenceNum = `${book.currentSequence}/${book.year}`;
+    console.log('Formatted sequence number:', formattedSequenceNum);
+
+    // Tạo một đối tượng văn bằng mới
     const newDiploma: Diploma = {
       ...diploma,
       id: Date.now().toString(),
-      sequenceNumber,
+      sequenceNumber: book.currentSequence,
+      diplomaNumber: formattedSequenceNum, // Gán số vào sổ đã format
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    
-    localStorage.setItem(STORAGE_KEYS.DIPLOMAS, JSON.stringify([...diplomas, newDiploma]));
-    return newDiploma;
-  },
 
+    console.log('New diploma to be added:', newDiploma);
+
+    // Cập nhật danh sách localStorage với dữ liệu mới
+    const updatedData = [
+      ...allData.filter((item: any) => !('currentSequence' in item)), // Lọc ra các dữ liệu không phải book
+      book, // Thêm book đã được cập nhật lại (số vào sổ)
+      newDiploma // Thêm văn bằng mới
+    ];
+
+    console.log('Updated data to be saved to localStorage:', updatedData);
+
+    // Lưu lại vào localStorage
+    localStorage.setItem(STORAGE_KEYS.DIPLOMAS, JSON.stringify(updatedData));
+
+    return newDiploma;
+},
+
+  
   update: (id: string, data: Partial<Diploma>): Diploma => {
     const diplomas = diplomaService.getAll();
     const index = diplomas.findIndex(diploma => diploma.id === id);
