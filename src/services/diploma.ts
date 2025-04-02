@@ -230,7 +230,7 @@ export const formFieldService = {
     );
   }
 };
-// Diploma service
+// danh sách văn bằng
 export const diplomaService = {
   getAll: (): Diploma[] => {
     const data = localStorage.getItem(STORAGE_KEYS.DIPLOMAS);

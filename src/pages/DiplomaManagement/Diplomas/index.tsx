@@ -7,13 +7,12 @@ import ProTable from '@ant-design/pro-table';
 import DiplomaForm from '@/components/DiplomaForm';
 import DiplomaDetail from '@/components/DiplomaDetail';
 import type { Diploma } from '@/models/diploma';
-import { diplomaService } from '@/services/diploma';
 
 const DiplomasPage: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [modalVisible, setModalVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
-  const [selectedDiploma, setSelectedDiploma] = useState<Diploma>();
+  const [selectedDiploma, setSelectedDiploma] = useState<Diploma | undefined>();
   const [loading, setLoading] = useState(false);
 
   const columns: ProColumns<Diploma>[] = [
@@ -56,7 +55,7 @@ const DiplomasPage: React.FC = () => {
       title: 'Thao tác',
       width: 180,
       render: (_: any, record: Diploma) => (
-        <Space>
+        <Space key={record.id}>
           <Button 
             type="link" 
             onClick={() => {
@@ -87,19 +86,38 @@ const DiplomasPage: React.FC = () => {
           actionRef={actionRef}
           columns={columns}
           request={async (params) => {
-            const data = await diplomaService.getAll(params);
+            const storedDiplomas = JSON.parse(localStorage.getItem('diplomas') || '[]') as Diploma[];
+          
+            const keyword = params.keyword || ''; // Nếu keyword là undefined, sử dụng chuỗi rỗng
+          
+            if (keyword) {
+              const filteredDiplomas = storedDiplomas.filter(
+                (diploma) =>
+                  diploma.diplomaNumber.includes(keyword) ||
+                  diploma.studentId.includes(keyword) ||
+                  diploma.fullName.includes(keyword)
+              );
+              return {
+                data: filteredDiplomas,
+                success: true,
+                total: filteredDiplomas.length,
+              };
+            }
+          
             return {
-              data,
+              data: storedDiplomas,
               success: true,
-              total: data.length,
+              total: storedDiplomas.length,
             };
           }}
+          
           rowKey="id"
           search={{
             labelWidth: 120,
           }}
           toolBarRender={() => [
             <Button
+              key="add-diploma"
               type="primary"
               onClick={() => {
                 setSelectedDiploma(undefined);
@@ -128,10 +146,18 @@ const DiplomasPage: React.FC = () => {
               setLoading(true);
               try {
                 if (selectedDiploma) {
-                  await diplomaService.update(selectedDiploma.id, values);
+                  // Cập nhật văn bằng trong localStorage
+                  const diplomas = JSON.parse(localStorage.getItem('diplomas') || '[]') as Diploma[];
+                  const updatedDiplomas = diplomas.map((diploma) =>
+                    diploma.id === selectedDiploma.id ? { ...diploma, ...values } : diploma
+                  );
+                  localStorage.setItem('diplomas', JSON.stringify(updatedDiplomas));
                   message.success('Cập nhật văn bằng thành công');
                 } else {
-                  await diplomaService.create(values);
+                  // Thêm mới văn bằng vào localStorage
+                  const diplomas = JSON.parse(localStorage.getItem('diplomas') || '[]') as Diploma[];
+                  const newDiploma = { id: String(Date.now()), ...values };
+                  localStorage.setItem('diplomas', JSON.stringify([...diplomas, newDiploma]));
                   message.success('Thêm văn bằng thành công');
                 }
                 setModalVisible(false);
