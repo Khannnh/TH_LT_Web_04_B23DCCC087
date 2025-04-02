@@ -1,28 +1,44 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { FormField } from '@/models/diploma';
-import { formFieldService } from '@/services/diploma';
 import { message } from 'antd';
 
 export default function useFormField() {
   const [fields, setFields] = useState<FormField[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const loadFields = useCallback(async () => {
+  // Load dữ liệu từ localStorage khi component mount
+  useEffect(() => {
+    const savedFields = localStorage.getItem('fields');
+    if (savedFields) {
+      setFields(JSON.parse(savedFields));
+    }
+  }, []);
+
+  const saveToLocalStorage = (newFields: FormField[]) => {
+    localStorage.setItem('fields', JSON.stringify(newFields));
+  };
+
+  const loadFields = useCallback(() => {
     setLoading(true);
     try {
-      const data = await formFieldService.getAll();
-      setFields(data);
+      const savedFields = localStorage.getItem('fields');
+      if (savedFields) {
+        setFields(JSON.parse(savedFields));
+      }
     } catch (error) {
       message.error('Không thể tải danh sách trường thông tin');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const addField = useCallback(async (field: Omit<FormField, 'id'>) => {
     setLoading(true);
     try {
-      const newField = await formFieldService.create(field);
-      setFields(prev => [...prev, newField]);
+      const newField = { ...field, id: Date.now().toString() }; // Tạo ID mới
+      const updatedFields = [...fields, newField];
+      setFields(updatedFields);
+      saveToLocalStorage(updatedFields);
       message.success('Thêm trường thông tin thành công');
       return newField;
     } catch (error) {
@@ -31,30 +47,30 @@ export default function useFormField() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fields]);
 
   const updateField = useCallback(async (id: string, field: Partial<FormField>) => {
     setLoading(true);
     try {
-      const updatedField = await formFieldService.update(id, field);
-      setFields(prev => 
-        prev.map(f => f.id === id ? updatedField : f)
-      );
+      const updatedFields = fields.map(f => f.id === id ? { ...f, ...field } : f);
+      setFields(updatedFields);
+      saveToLocalStorage(updatedFields);
       message.success('Cập nhật trường thông tin thành công');
-      return updatedField;
+      return updatedFields;
     } catch (error) {
       message.error('Cập nhật trường thông tin thất bại');
       throw error;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fields]);
 
   const deleteField = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      await formFieldService.delete(id);
-      setFields(prev => prev.filter(f => f.id !== id));
+      const updatedFields = fields.filter(f => f.id !== id);
+      setFields(updatedFields);
+      saveToLocalStorage(updatedFields);
       message.success('Xóa trường thông tin thành công');
     } catch (error) {
       message.error('Xóa trường thông tin thất bại');
@@ -62,7 +78,7 @@ export default function useFormField() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fields]);
 
   return {
     fields,

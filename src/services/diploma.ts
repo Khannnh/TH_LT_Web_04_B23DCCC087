@@ -17,7 +17,7 @@ const STORAGE_KEYS = {
 
 // Sổ văn bằng service
 export const diplomaBookService = {
-  getAll: (): DiplomaBook[] => {
+  getAll: (): DiplomaBook[] => {    //Interface DiplomaBook
     const data = localStorage.getItem(STORAGE_KEYS.BOOKS);
     return data ? JSON.parse(data) : [];
   },
@@ -91,7 +91,7 @@ export const diplomaBookService = {
 
 // Quyết định tốt nghiệp service
 export const graduationDecisionService = {
-  getAll: (): GraduationDecision[] => {
+  getAll: (): GraduationDecision[] => {       //Interface GraduationDecision
     const data = localStorage.getItem(STORAGE_KEYS.DECISIONS);
     return data ? JSON.parse(data) : [];
   },
@@ -124,7 +124,7 @@ export const graduationDecisionService = {
   book.currentSequence = newSequence;
   diplomaBookService.update(book.id, { currentSequence: newSequence });
     
-    const newDecision: GraduationDecision = {
+    const newDecision: GraduationDecision = {   
       ...decision,
       id: Date.now().toString(), // Tạo id tự động bằng timestamp
       decisionNumber: formattedDecisionNumber,
@@ -188,20 +188,20 @@ export const graduationDecisionService = {
 };
 
 
-// Form field service
+// cấu hình phụ lục văn bằng
 export const formFieldService = {
   getAll: (): FormField[] => {
     const data = localStorage.getItem(STORAGE_KEYS.FIELDS);
     return data ? JSON.parse(data) : [];
   },
 
-  create: (field: Omit<FormField, 'id' | 'createdAt' | 'updatedAt'>) => {
+  create: (field: Omit<FormField, 'id' >) => {
     const fields = formFieldService.getAll();
     const newField: FormField = {
       ...field,
       id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      // createdAt: new Date().toISOString(),
+      // updatedAt: new Date().toISOString()
     };
     localStorage.setItem(STORAGE_KEYS.FIELDS, JSON.stringify([...fields, newField]));
     return newField;

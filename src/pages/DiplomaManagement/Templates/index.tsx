@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Button, Modal, Space, Tag } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import useFormField from '@/models/useFormField';
@@ -25,12 +25,21 @@ const TemplatesPage: React.FC = () => {
   const dataTypeColors = {
     string: 'blue',
     number: 'green',
-    date: 'orange'
+    date: 'orange',
   };
 
-  const handleDelete = async (id: string) => {
-    await deleteField(id);
-    actionRef.current?.reload();
+  const handleDelete = (id: string) => {
+    Modal.confirm({
+      title: 'Bạn có chắc chắn muốn xóa trường này?',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Hành động này không thể hoàn tác!',
+      okText: 'Xóa',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        await deleteField(id);
+        actionRef.current?.reload();
+      },
+    });
   };
 
   const columns = [
@@ -49,7 +58,9 @@ const TemplatesPage: React.FC = () => {
       dataIndex: 'dataType',
       width: 120,
       render: (_: unknown, record: FormField) => (
-        <Tag color={dataTypeColors[record.dataType]}>{record.dataType.toUpperCase()}</Tag>
+        <Tag key={record.id} color={dataTypeColors[record.dataType]}>
+          {record.dataType.toUpperCase()}
+        </Tag>
       ),
       valueEnum: {
         string: { text: 'Text' },
@@ -70,9 +81,9 @@ const TemplatesPage: React.FC = () => {
       title: 'Thao tác',
       width: 180,
       render: (_: any, record: FormField) => (
-        <Space>
-          <Button 
-            type="link" 
+        <Space key={record.id}>
+          <Button
+            type="link"
             onClick={() => {
               setEditingField(record);
               setModalVisible(true);
@@ -80,11 +91,7 @@ const TemplatesPage: React.FC = () => {
           >
             Sửa
           </Button>
-          <Button 
-            type="link" 
-            danger
-            onClick={() => handleDelete(record.id)}
-          >
+          <Button type="link" danger onClick={() => handleDelete(record.id)}>
             Xóa
           </Button>
         </Space>
@@ -104,6 +111,7 @@ const TemplatesPage: React.FC = () => {
           loading={loading}
           toolBarRender={() => [
             <Button
+              key="add-field"
               type="primary"
               onClick={() => {
                 setEditingField(undefined);
