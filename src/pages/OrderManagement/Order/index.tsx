@@ -5,7 +5,6 @@ import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import OrderModal from '@/components/OrderForm';
 import type { Order } from '@/models/orderModel';
 import { OrderService } from '@/services/order'; // Đảm bảo đã import OrderService
-import { mockProducts, mockCustomers } from '@/models/orderModel';
 
 const { confirm } = Modal;
 
@@ -24,8 +23,7 @@ const OrderManagementPage: React.FC = () => {
     setLoading(true);
     try {
       const { productList, customerId } = values;
-      const product = productList[0];
-      const totalAmount = product.price;
+      const totalAmount = productList.reduce((sum: number, product: any) => sum + product.price, 0); // Tính tổng tiền cho tất cả sản phẩm
       const customerName = OrderService.getCustomers().find(customer => customer.customerId === customerId)?.name || 'Unknown Customer';
 
       const updatedOrders = [...orders];
@@ -33,7 +31,7 @@ const OrderManagementPage: React.FC = () => {
         ...values,
         totalAmount,
         customerName,
-        productList: [product],
+        productList,  // Đảm bảo lưu cả danh sách sản phẩm
       };
 
       if (editingOrder) {
