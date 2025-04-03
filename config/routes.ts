@@ -16,6 +16,12 @@
 		],
 	},
 	{
+		path: '/room',
+		name: 'Quản lý phòng học',
+		icon: 'HomeOutlined',
+		component: './RoomManagement',
+	},
+	{
 		path: '/diploma',
 		name: 'Quản lý văn bằng',
 		icon: 'FileProtectOutlined',
