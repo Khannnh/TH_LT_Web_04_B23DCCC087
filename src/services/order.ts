@@ -80,6 +80,7 @@ export const OrderService = {
     // Lưu đơn hàng vào localStorage
     OrderService.saveOrders(orders);
   },
+
   cancelOrder: (orderId: string): void => {
     const orders = OrderService.getOrders();
     
@@ -107,6 +108,44 @@ export const OrderService = {
     }
     return orders;
   },
+
+  // Hàm cập nhật đơn hàng
+updateOrder: (orderId: string, updatedOrder: Omit<Order, 'orderId' | 'totalAmount' | 'customerName'>) => {
+  if (!updatedOrder.customerId || !updatedOrder.orderDate || updatedOrder.productList.length === 0) {
+    throw new Error('Vui lòng nhập đầy đủ thông tin đơn hàng.');
+  }
+
+  // Lấy danh sách khách hàng và sản phẩm
+  const customers = OrderService.getCustomers();
+  const products = OrderService.getProducts();
+
+  // Tính tổng tiền đơn hàng
+  const totalAmount = OrderService.calculateTotalAmount(updatedOrder.productList);
+
+  // Lấy tên khách hàng
+  const customerName = customers.find(c => c.customerId === updatedOrder.customerId)?.name || 'Unknown Customer';
+
+  // Lấy danh sách đơn hàng và tìm đơn hàng cần cập nhật
+  const orders = OrderService.getOrders();
+  const orderIndex = orders.findIndex(order => order.orderId === orderId);
+
+  if (orderIndex === -1) {
+    throw new Error('Đơn hàng không tồn tại.');
+  }
+
+  // Cập nhật đơn hàng
+  orders[orderIndex] = {
+    ...orders[orderIndex],
+    ...updatedOrder,
+    totalAmount, 
+    customerName
+  };
+
+  // Lưu lại danh sách đơn hàng đã cập nhật
+  OrderService.saveOrders(orders);
+  console.log('🚀 Đơn hàng đã cập nhật:', orders[orderIndex]);  // Kiểm tra đơn hàng đã cập nhật
+},
+
 };
 
 export default OrderService;

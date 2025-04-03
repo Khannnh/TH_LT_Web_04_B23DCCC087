@@ -33,9 +33,7 @@ const OrderManagementPage: React.FC = () => {
 
       if (editingOrder) {
         // Cập nhật đơn hàng
-        OrderService.saveOrders(orders.map(order => 
-          order.orderId === editingOrder.orderId ? { ...order, ...orderData } : order
-        ));
+        OrderService.updateOrder(editingOrder.orderId, orderData);
         message.success('Cập nhật đơn hàng thành công');
       } else {
         // Thêm đơn hàng mới
@@ -142,6 +140,15 @@ const OrderManagementPage: React.FC = () => {
           <Button onClick={() => handleDelete(record.orderId)} danger>
             Hủy
           </Button>
+          <Button 
+            onClick={() => {
+              setEditingOrder(record);  // Cập nhật đơn hàng cần chỉnh sửa
+              setModalVisible(true);    // Mở modal cho việc chỉnh sửa
+            }} 
+            type="default"
+          >
+            Cập nhật
+          </Button>
         </Space>
       ),
     },
@@ -156,15 +163,15 @@ const OrderManagementPage: React.FC = () => {
           onChange={(e) => handleSearch(e.target.value)}
           style={{ marginBottom: 16, width: 500 }}
         />
-                <Button
+        <Button
           key="add"
           type="primary"
           onClick={() => {
-            setEditingOrder(null);
-            setModalVisible(true);
+            setEditingOrder(null);  // Đặt lại state cho modal khi thêm mới đơn hàng
+            setModalVisible(true);  // Mở modal để thêm đơn hàng
           }}
           icon={<PlusOutlined />}
-          style={{ marginTop: 16 , marginLeft : 40}}
+          style={{ marginTop: 16 , marginLeft: 40 }}
         >
           Thêm đơn hàng
         </Button>
@@ -178,8 +185,8 @@ const OrderManagementPage: React.FC = () => {
         <OrderModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
-          onSave={handleAddOrUpdate}
-          initialData={editingOrder}
+          onSave={handleAddOrUpdate}  // Hàm này sẽ thực hiện cả việc thêm và cập nhật
+          initialData={editingOrder}  // Truyền dữ liệu đơn hàng khi cập nhật
         />
       </Card>
     </PageContainer>

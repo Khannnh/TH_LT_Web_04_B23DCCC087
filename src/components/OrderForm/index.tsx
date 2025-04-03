@@ -17,7 +17,12 @@ const OrderModal: React.FC<OrderModalProps> = ({ visible, onClose, onSave, initi
 
   useEffect(() => {
     if (initialData) {
-      form.setFieldsValue(initialData);
+      // Chuyển đổi productList từ danh sách sản phẩm đầy đủ thành chỉ các productId
+      const productIds = initialData.productList.map(product => product.productId);
+      form.setFieldsValue({
+        ...initialData,
+        productList: productIds,  // Chỉ truyền productId vào form
+      });
     } else {
       form.resetFields();
     }
