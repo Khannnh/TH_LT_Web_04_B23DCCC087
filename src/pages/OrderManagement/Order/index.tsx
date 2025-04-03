@@ -6,6 +6,9 @@ import type { ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import OrderModal from '@/components/OrderForm'; 
 import type { Order } from '@/models/orderModel';
+import type { OrderService } from '@/services/order';
+import { ProColumns } from '@ant-design/pro-table';
+
 
 const { confirm } = Modal;
 
@@ -25,7 +28,7 @@ const OrderManagementPage: React.FC = () => {
   const handleAddOrUpdate = async (values: any) => {
     setLoading(true);
     try {
-      let updatedOrders = [...orders];
+      const updatedOrders = [...orders];
       if (editingOrder) {
         // Cập nhật đơn hàng
         const index = updatedOrders.findIndex(order => order.orderId === editingOrder.orderId);
@@ -55,7 +58,7 @@ const OrderManagementPage: React.FC = () => {
       title: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
       icon: <ExclamationCircleOutlined />,
       content: 'Hành động này không thể hoàn tác!',
-      okText: 'Hủy',
+      okText: 'Xác nhận hủy',
       okType: 'danger',
       cancelText: 'Hủy',
       onOk() {
@@ -72,7 +75,8 @@ const OrderManagementPage: React.FC = () => {
     });
   };
 
-  const columns = [
+
+  const columns: ProColumns<Order>[] = [
     {
       title: 'Mã đơn hàng',
       dataIndex: 'orderId',
@@ -97,7 +101,8 @@ const OrderManagementPage: React.FC = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => {
+      render: (dom, entity, index, action, schema) => {
+        const status = entity.status;
         return (
           <span>
             {status === 'Pending' && 'Chờ xác nhận'}
@@ -108,30 +113,8 @@ const OrderManagementPage: React.FC = () => {
         );
       },
     },
-    {
-      title: 'Thao tác',
-      width: 180,
-      render: (_: any, record: Order) => (
-        <Space>
-          <Button
-            type="link"
-            onClick={() => {
-              setEditingOrder(record);
-              setModalVisible(true);
-            }}
-          >
-            Sửa
-          </Button>
-          {/* Chỉ hiển thị nút "Hủy" khi trạng thái là "Chờ xác nhận" */}
-          {record.status === 'Pending' && (
-            <Button type="link" danger onClick={() => handleDelete(record.orderId)}>
-              Hủy
-            </Button>
-          )}
-        </Space>
-      ),
-    },
   ];
+  
 
   return (
     <PageContainer>

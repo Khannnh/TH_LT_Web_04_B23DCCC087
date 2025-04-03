@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Select, Button, InputNumber } from 'antd';
 import type { Order } from '@/models/orderModel';
+import { mockCustomers, mockProducts } from '@/models/orderModel';
 
 const { Option } = Select;
 
@@ -8,7 +9,7 @@ interface OrderModalProps {
   visible: boolean;
   onClose: () => void;
   onSave: (order: Order) => void;
-  initialData?: Order;
+  initialData?: Order | null;
 }
 
 const OrderModal: React.FC<OrderModalProps> = ({ visible, onClose, onSave, initialData }) => {
@@ -16,8 +17,11 @@ const OrderModal: React.FC<OrderModalProps> = ({ visible, onClose, onSave, initi
   const [totalAmount, setTotalAmount] = useState<number>(initialData?.totalAmount || 0);
 
   const handleCalculateTotal = () => {
-    const productList = form.getFieldValue('productList') || [];
-    const total = productList.reduce((sum: number, product: any) => sum + (product.price * product.quantity), 0);
+    const selectedProductIds = form.getFieldValue('productList') || [];
+    const total = selectedProductIds.reduce((sum: number, productId: string) => {
+      const product = mockProducts.find(p => p.productId === productId);
+      return product ? sum + product.price : sum;
+    }, 0);
     setTotalAmount(total);
   };
 
@@ -28,20 +32,22 @@ const OrderModal: React.FC<OrderModalProps> = ({ visible, onClose, onSave, initi
       onCancel={onClose}
       footer={null}
     >
-      <Form
-        form={form}
-        initialValues={initialData}
-        onFinish={onSave}
-        layout="vertical"
-      >
-        <Form.Item name="orderId" label="Mã đơn hàng" rules={[{ required: true }]}> 
+    <Form
+      form={form}
+      initialValues={initialData || {}}  // Nếu initialData là null, truyền một object rỗng
+      onFinish={onSave}
+      layout="vertical"
+    >
+
+        {/* <Form.Item name="orderId" label="Mã đơn hàng" rules={[{ required: true }]}> 
           <Input />
-        </Form.Item>
+        </Form.Item> */}
         
         <Form.Item name="customerId" label="Khách hàng" rules={[{ required: true }]}> 
           <Select>
-            <Option value="1">Khách hàng 1</Option>
-            <Option value="2">Khách hàng 2</Option>
+            {mockCustomers.map(customer => (
+              <Option key={customer.customerId} value={customer.customerId}>{customer.name}</Option>
+            ))}
           </Select>
         </Form.Item>
         
@@ -51,8 +57,11 @@ const OrderModal: React.FC<OrderModalProps> = ({ visible, onClose, onSave, initi
         
         <Form.Item name="productList" label="Sản phẩm" rules={[{ required: true }]}> 
           <Select mode="multiple" onChange={handleCalculateTotal}>
-            <Option value="p1">Sản phẩm 1 - 100.000đ</Option>
-            <Option value="p2">Sản phẩm 2 - 200.000đ</Option>
+            {mockProducts.map(product => (
+              <Option key={product.productId} value={product.productId}>
+                {product.name} - {product.price.toLocaleString()}đ
+              </Option>
+            ))}
           </Select>
         </Form.Item>
         
