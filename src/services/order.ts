@@ -80,4 +80,20 @@ export const OrderService = {
     // Lưu đơn hàng vào localStorage
     OrderService.saveOrders(orders);
   },
+  cancelOrder: (orderId: string): void => {
+    const orders = OrderService.getOrders();
+    
+    // Kiểm tra trạng thái đơn hàng trước khi xóa
+    const orderIndex = orders.findIndex(order => order.orderId === orderId);
+    if (orderIndex !== -1 && orders[orderIndex].status === 'Pending') {
+      // Chỉ cho phép hủy đơn hàng có trạng thái "Chờ xác nhận"
+      orders.splice(orderIndex, 1);  // Xóa đơn hàng khỏi danh sách
+
+      // Lưu lại danh sách sau khi hủy
+      OrderService.saveOrders(orders);
+      console.log('Đơn hàng đã hủy:', orders[orderIndex]);  // Kiểm tra đơn hàng bị xóa
+    } else {
+      throw new Error('Chỉ những đơn hàng có trạng thái "Chờ xác nhận" mới có thể hủy.');
+    }
+  },
 };

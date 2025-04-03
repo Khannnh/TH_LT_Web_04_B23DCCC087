@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Button, message, Modal, Space, Table } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import OrderModal from '@/components/OrderForm';
 import type { Order } from '@/models/orderModel';
-import {OrderService} from '@/services/order'; 
+import { OrderService } from '@/services/order'; // Đảm bảo đã import OrderService
 import { mockProducts, mockCustomers } from '@/models/orderModel';
-import type { Product } from '@/models/orderModel';
 
 const { confirm } = Modal;
 
@@ -14,12 +13,10 @@ const OrderManagementPage: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]); // Lưu danh sách đơn hàng
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    // Lấy danh sách đơn hàng từ localStorage khi component được render
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-    console.log('Dữ liệu từ localStorage:', storedOrders);  // Kiểm tra dữ liệu từ localStorage
     setOrders(storedOrders);
   }, []);
 
@@ -28,37 +25,34 @@ const OrderManagementPage: React.FC = () => {
     try {
       const { productList, customerId } = values;
       const product = productList[0];
-      const totalAmount = product.price;  // Tổng tiền chỉ bằng giá sản phẩm
+      const totalAmount = product.price;
       const customerName = OrderService.getCustomers().find(customer => customer.customerId === customerId)?.name || 'Unknown Customer';
-  
+
       const updatedOrders = [...orders];
       const orderData = {
         ...values,
         totalAmount,
         customerName,
-        productList: [product],  // Chỉ thêm một sản phẩm vào danh sách
+        productList: [product],
       };
-  
+
       if (editingOrder) {
-        // Cập nhật đơn hàng
         const index = updatedOrders.findIndex(order => order.orderId === editingOrder.orderId);
         if (index !== -1) {
           updatedOrders[index] = { ...updatedOrders[index], ...orderData };
         }
         message.success('Cập nhật đơn hàng thành công');
       } else {
-        // Thêm mới đơn hàng
-        const newOrder: Order = { 
+        const newOrder: Order = {
           ...orderData,
-          orderId: `OD-${Date.now()}`,  // Tạo mã đơn hàng tự động
+          orderId: `OD-${Date.now()}`,
         };
         updatedOrders.push(newOrder);
         message.success('Thêm đơn hàng thành công');
       }
-  
-      // Lưu lại danh sách đơn hàng vào localStorage
-      localStorage.setItem('orders', JSON.stringify(updatedOrders));  // Đảm bảo lưu danh sách vào localStorage
-      setOrders(updatedOrders);  // Cập nhật lại state orders trong UI
+
+      localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      setOrders(updatedOrders);
       setModalVisible(false);
       setEditingOrder(null);
     } catch (error) {
@@ -66,8 +60,7 @@ const OrderManagementPage: React.FC = () => {
     }
     setLoading(false);
   };
-  
-  // Hàm này sẽ được gọi khi người dùng nhấn nút "Hủy" trong bảng
+
   const handleDelete = (orderId: string) => {
     confirm({
       title: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
@@ -78,14 +71,12 @@ const OrderManagementPage: React.FC = () => {
       cancelText: 'Hủy',
       onOk() {
         try {
-          // Xóa đơn hàng khỏi localStorage
-          const updatedOrders = orders.filter(order => order.orderId !== orderId);
-          console.log('Danh sách đơn hàng sau khi xóa:', updatedOrders);  // Kiểm tra danh sách sau khi xóa
-          localStorage.setItem('orders', JSON.stringify(updatedOrders));
+          OrderService.cancelOrder(orderId);  // Gọi hàm hủy từ OrderService
+          const updatedOrders = OrderService.getOrders();
           setOrders(updatedOrders);
           message.success('Hủy đơn hàng thành công');
-        } catch (error) {
-          message.error('Hủy đơn hàng thất bại');
+        } catch (error: any) {
+          message.error(error.message);  // Hiển thị thông báo lỗi nếu không thể hủy
         }
       },
     });
@@ -149,7 +140,6 @@ const OrderManagementPage: React.FC = () => {
           rowKey="orderId"
           pagination={false}
         />
-        {/* Nút Thêm Đơn Hàng */}
         <Button
           key="add"
           type="primary"
@@ -163,7 +153,6 @@ const OrderManagementPage: React.FC = () => {
           Thêm đơn hàng
         </Button>
 
-        {/* Modal Form để Thêm/Sửa đơn hàng */}
         <OrderModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
