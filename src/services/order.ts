@@ -1,4 +1,5 @@
 import type { Order, Product, Customer } from '@/models/orderModel';
+import { mockCustomers, mockProducts } from '@/models/orderModel';
 
 const STORAGE_KEYS = {
   ORDERS: 'orders',
@@ -18,14 +19,34 @@ export const OrderService = {
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
   },
 
+  // Lấy danh sách khách hàng từ localStorage (nếu chưa có thì lưu mockData vào)
+  getCustomers: (): Customer[] => {
+    let customers = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
+    if (!customers) {
+      localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(mockCustomers));
+      customers = JSON.stringify(mockCustomers);
+    }
+    return JSON.parse(customers);
+  },
+
+  // Lấy danh sách sản phẩm từ localStorage (nếu chưa có thì lưu mockData vào)
+  getProducts: (): Product[] => {
+    let products = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+    if (!products) {
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(mockProducts));
+      products = JSON.stringify(mockProducts);
+    }
+    return JSON.parse(products);
+  },
+
   // Kiểm tra mã đơn hàng có trùng không
   isDuplicateOrderId: (orderId: string): boolean => {
     return OrderService.getOrders().some(order => order.orderId === orderId);
   },
 
-  // Tính tổng tiền dựa trên danh sách sản phẩm
+  // Tính tổng tiền đơn hàng
   calculateTotalAmount: (productList: Order['productList']): number => {
-    return productList.reduce((total, product) => total + product.price * product.quantity, 0);
+    return productList.reduce((total, product) => total + product.price, 0);
   },
 
   // Thêm đơn hàng
@@ -38,64 +59,25 @@ export const OrderService = {
       throw new Error('Mã đơn hàng đã tồn tại.');
     }
 
-    // Sử dụng hàm tính tổng tiền
+    // Lấy danh sách khách hàng và sản phẩm
+    const customers = OrderService.getCustomers();
+    const products = OrderService.getProducts();
+
+    // Tính tổng tiền đơn hàng
     const totalAmount = OrderService.calculateTotalAmount(order.productList);
 
-    // Lấy tên khách hàng từ customerId
-    const customerName = OrderService.getCustomers().find(customer => customer.customerId === order.customerId)?.name || 'Unknown Customer';
+    // Lấy tên khách hàng
+    const customerName = customers.find(c => c.customerId === order.customerId)?.name || 'Unknown Customer';
 
+    // Tạo đơn hàng mới
     const newOrder: Order = { ...order, totalAmount, customerName };
 
+    // Lưu vào danh sách
     const orders = OrderService.getOrders();
     orders.push(newOrder);
+    console.log('🚀 Đơn hàng mới:', newOrder);  // Kiểm tra đơn hàng mới
+
+    // Lưu đơn hàng vào localStorage
     OrderService.saveOrders(orders);
-  },
-
-  // Cập nhật đơn hàng
-  updateOrder: (updatedOrder: Omit<Order, 'totalAmount' | 'customerName'>) => {
-    if (!updatedOrder.orderId || !updatedOrder.customerId || !updatedOrder.orderDate || updatedOrder.productList.length === 0) {
-      throw new Error('Vui lòng nhập đầy đủ thông tin đơn hàng.');
-    }
-
-    // Sử dụng hàm tính tổng tiền
-    const totalAmount = OrderService.calculateTotalAmount(updatedOrder.productList);
-
-    // Lấy tên khách hàng từ customerId
-    const customerName = OrderService.getCustomers().find(customer => customer.customerId === updatedOrder.customerId)?.name || 'Unknown Customer';
-
-    const orders = OrderService.getOrders().map(order =>
-      order.orderId === updatedOrder.orderId ? { ...updatedOrder, totalAmount, customerName } : order
-    );
-
-    OrderService.saveOrders(orders);
-  },
-
-  // Hủy đơn hàng (Chỉ cho phép hủy nếu trạng thái là "Pending")
-  cancelOrder: (orderId: string) => {
-    const orders = OrderService.getOrders();
-    const orderIndex = orders.findIndex(order => order.orderId === orderId);
-
-    if (orderIndex === -1) {
-      throw new Error('Không tìm thấy đơn hàng.');
-    }
-
-    if (orders[orderIndex].status !== 'Pending') {
-      throw new Error('Chỉ có thể hủy đơn hàng ở trạng thái "Chờ xác nhận".');
-    }
-
-    orders[orderIndex].status = 'Cancelled';
-    OrderService.saveOrders(orders);
-  },
-
-  // Xóa đơn hàng (Chỉ dùng cho mục đích quản lý dữ liệu)
-  deleteOrder: (orderId: string) => {
-    const orders = OrderService.getOrders().filter(order => order.orderId !== orderId);
-    OrderService.saveOrders(orders);
-  },
-
-  // Lấy danh sách khách hàng từ localStorage
-  getCustomers: (): Customer[] => {
-    const customers = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
-    return customers ? JSON.parse(customers) : [];
   },
 };

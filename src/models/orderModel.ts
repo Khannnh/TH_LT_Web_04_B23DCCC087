@@ -23,7 +23,6 @@ export interface Order {
       productId: string;
       name: string;
       price: number;
-      quantity: number;
     }[];
   }
   // Mock data
