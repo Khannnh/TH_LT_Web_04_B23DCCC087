@@ -96,4 +96,17 @@ export const OrderService = {
       throw new Error('Chỉ những đơn hàng có trạng thái "Chờ xác nhận" mới có thể hủy.');
     }
   },
+  searchOrders: (query: string): Order[] => {
+    const orders = OrderService.getOrders();
+    if (query) {
+      return orders.filter(
+        (order) =>
+          order.orderId.toLowerCase().includes(query.toLowerCase()) ||
+          order.customerName.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    return orders;
+  },
 };
+
+export default OrderService;

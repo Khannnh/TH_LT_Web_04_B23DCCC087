@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Button, message, Modal, Space, Table } from 'antd';
+import { Card, Button, message, Modal, Space, Table, Input } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import OrderModal from '@/components/OrderForm';
 import type { Order } from '@/models/orderModel';
-import { OrderService } from '@/services/order'; // Đảm bảo đã import OrderService
+import { OrderService } from '@/services/order';  // Import OrderService
 
 const { confirm } = Modal;
 
@@ -13,48 +13,48 @@ const OrderManagementPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');  // Từ khóa tìm kiếm
 
   useEffect(() => {
-    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const storedOrders = OrderService.getOrders();
     setOrders(storedOrders);
+    setFilteredOrders(storedOrders);  // Mặc định hiển thị tất cả đơn hàng
   }, []);
 
   const handleAddOrUpdate = async (values: any) => {
     setLoading(true);
     try {
       const { productList, customerId } = values;
-      const totalAmount = productList.reduce((sum: number, product: any) => sum + product.price, 0); // Tính tổng tiền cho tất cả sản phẩm
+      const totalAmount = OrderService.calculateTotalAmount(productList);
       const customerName = OrderService.getCustomers().find(customer => customer.customerId === customerId)?.name || 'Unknown Customer';
 
-      const updatedOrders = [...orders];
-      const orderData = {
-        ...values,
-        totalAmount,
-        customerName,
-        productList,  // Đảm bảo lưu cả danh sách sản phẩm
-      };
+      const orderData = { ...values, totalAmount, customerName, productList };
 
       if (editingOrder) {
-        const index = updatedOrders.findIndex(order => order.orderId === editingOrder.orderId);
-        if (index !== -1) {
-          updatedOrders[index] = { ...updatedOrders[index], ...orderData };
-        }
+        // Cập nhật đơn hàng
+        OrderService.saveOrders(orders.map(order => 
+          order.orderId === editingOrder.orderId ? { ...order, ...orderData } : order
+        ));
         message.success('Cập nhật đơn hàng thành công');
       } else {
+        // Thêm đơn hàng mới
         const newOrder: Order = {
           ...orderData,
           orderId: `OD-${Date.now()}`,
         };
-        updatedOrders.push(newOrder);
+        OrderService.saveOrders([...orders, newOrder]);
         message.success('Thêm đơn hàng thành công');
       }
 
-      localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      // Cập nhật lại danh sách đơn hàng
+      const updatedOrders = OrderService.getOrders();
       setOrders(updatedOrders);
+      setFilteredOrders(updatedOrders);
       setModalVisible(false);
       setEditingOrder(null);
-    } catch (error) {
-      message.error('Có lỗi xảy ra');
+    } catch (error: any) {
+      message.error(error.message || 'Có lỗi xảy ra');
     }
     setLoading(false);
   };
@@ -69,15 +69,22 @@ const OrderManagementPage: React.FC = () => {
       cancelText: 'Hủy',
       onOk() {
         try {
-          OrderService.cancelOrder(orderId);  // Gọi hàm hủy từ OrderService
+          OrderService.cancelOrder(orderId);
           const updatedOrders = OrderService.getOrders();
           setOrders(updatedOrders);
+          setFilteredOrders(updatedOrders);
           message.success('Hủy đơn hàng thành công');
         } catch (error: any) {
-          message.error(error.message);  // Hiển thị thông báo lỗi nếu không thể hủy
+          message.error(error.message);
         }
       },
     });
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    const filtered = OrderService.searchOrders(value);
+    setFilteredOrders(filtered);
   };
 
   const columns = [
@@ -95,14 +102,14 @@ const OrderManagementPage: React.FC = () => {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
       key: 'orderDate',
-      sorter: (a: Order, b: Order) => new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime(), // Thêm sắp xếp theo ngày đặt hàng
+      sorter: (a: Order, b: Order) => new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime(),
       render: (orderDate: string) => new Date(orderDate).toLocaleString(),
     },
     {
       title: 'Tổng tiền',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
-      sorter: (a: Order, b: Order) => a.totalAmount - b.totalAmount, // Thêm sắp xếp theo tổng tiền
+      sorter: (a: Order, b: Order) => a.totalAmount - b.totalAmount,
       render: (totalAmount: number) => totalAmount.toLocaleString() + 'đ',
     },
     {
@@ -136,13 +143,13 @@ const OrderManagementPage: React.FC = () => {
   return (
     <PageContainer>
       <Card>
-        <Table
-          columns={columns}
-          dataSource={orders}
-          rowKey="orderId"
-          pagination={false}
+        <Input
+          placeholder="Tìm kiếm theo mã đơn hàng hoặc khách hàng"
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+          style={{ marginBottom: 16, width: 500 }}
         />
-        <Button
+                <Button
           key="add"
           type="primary"
           onClick={() => {
@@ -150,10 +157,16 @@ const OrderManagementPage: React.FC = () => {
             setModalVisible(true);
           }}
           icon={<PlusOutlined />}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 16 , marginLeft : 40}}
         >
           Thêm đơn hàng
         </Button>
+        <Table
+          columns={columns}
+          dataSource={filteredOrders}
+          rowKey="orderId"
+          pagination={false}
+        />
 
         <OrderModal
           visible={modalVisible}
