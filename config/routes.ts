@@ -74,6 +74,25 @@
 		  },
 		],
 	},
+	{
+		path: '/order', //routes cha
+		name: 'Quản lý đơn hàng',//tên hiển thị ở giao diện
+		icon: 'ShoppingCartOutlined',
+		routes: [
+		  {
+			path: '/order/list',
+			name: 'Danh sách đơn hàng',//tên hiển thị ở giao diện
+			component: './OrderManagement/Order',
+			//component trong page có folder DiplomaManagement
+		  },
+		  {
+			path: '/order/act',  //diploma là nhánh cha rồi chia ra các nhánh con
+			name: 'Thao tác với đơn', //tên hiển thị ở giao diện
+			component: './OrderManagement/OrderAct',
+			//component trong page có folder DiplomaManagement
+		  },
+		],
+	},
 	
 
 	// DANH MUC HE THONG
