@@ -97,11 +97,15 @@ const OrderManagementPage: React.FC = () => {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
       key: 'orderDate',
+      sorter: (a: Order, b: Order) => new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime(), // Thêm sắp xếp theo ngày đặt hàng
+      render: (orderDate: string) => new Date(orderDate).toLocaleString(),
     },
     {
       title: 'Tổng tiền',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
+      sorter: (a: Order, b: Order) => a.totalAmount - b.totalAmount, // Thêm sắp xếp theo tổng tiền
+      render: (totalAmount: number) => totalAmount.toLocaleString() + 'đ',
     },
     {
       title: 'Trạng thái',
