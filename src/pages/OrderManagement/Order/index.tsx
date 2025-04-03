@@ -116,6 +116,13 @@ const OrderManagementPage: React.FC = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+      filters: [
+        { text: 'Chờ xác nhận', value: 'Pending' },
+        { text: 'Đang giao', value: 'Shipping' },
+        { text: 'Hoàn thành', value: 'Completed' },
+        { text: 'Hủy', value: 'Cancelled' },
+      ],
+      onFilter: (value: string, record: Order) => record.status.indexOf(value) === 0,
       render: (status: string) => {
         return (
           <span>
