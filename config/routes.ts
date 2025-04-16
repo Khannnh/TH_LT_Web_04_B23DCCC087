@@ -110,6 +110,33 @@
 		],
 	},
 	{
+		path: '/club',
+		name: 'Câu lạc bộ',
+		icon: 'TeamOutlined', 
+		routes: [
+		  {
+			path: '/club/list',
+			name: 'Danh sách câu lạc bộ',
+			component: './clubs ',
+		  },
+		  {
+			path: '/club/member',
+			name: 'Thành viên câu lạc bộ',
+			component: './members',
+		  },
+		  {
+			path: '/club/dashboard',
+			name: 'Tổng quan',
+			component: './dashboard',
+		  },
+		  {
+			path: '/club/dangky',
+			name: 'Đơn đăng ký',
+			component: './registrations',
+		  },
+		],
+	  },
+	{
 		path: '/rock-paper-scissors',
 		name: 'rockpaperscissors',
 		routes: [
