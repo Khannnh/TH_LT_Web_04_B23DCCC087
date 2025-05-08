@@ -38,32 +38,27 @@
 		icon: 'ArrowsAltOutlined',
 	},
 	{
-		path: '/study-management',
-		name: 'study',
-		icon: 'read',
-		routes: [
-		  {
-			path: '/study-management/subjects',
-			name: 'subjects',
-			component: '@/pages/StudyManagement/Subjects',
-		  },
-		  {
-			path: '/study-management/progress',
-			name: 'progress',
-			component: '@/pages/StudyManagement/Progress',
-		  },
-		  {
-			path: '/study-management/goals',
-			name: 'goals',
-			component: '@/pages/StudyManagement/Goals',
-		  },
-		],
-	  },
+	path: '/adminquanly',
+	name: 'Trang quản trị',
+	icon: 'SettingOutlined',
+	routes: [
+		{
+		path: '/adminquanly/diemden',
+		name: 'Quản lý điểm đến',
+		// component: '@/pages/Destination/DiemDen',
+		},
+		{
+		path: '/adminquanly/thongke',
+		name: 'Thống kê',
+		// component: '@/pages/Destination/ThongKe',
+		},
+	],
+	},
 	{
-		path: '/trochoidoanso',
-		name: 'Trò chơi đoán số',
-		component: '@/pages/Game',
-		icon: 'CalculatorOutlined',
+		path: '/diadiem',
+		name: 'Danh sách điểm đến',
+		// component: '@/pages/Destination/DiemDen',
+		icon: 'EnvironmentOutlined',
 	  },
 
 	// DANH MUC HE THONG
