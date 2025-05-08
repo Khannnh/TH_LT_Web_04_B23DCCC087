@@ -1,4 +1,4 @@
-declare module Destination  {
+export declare module Destination  {
 // Enum cho các lựa chọn ăn uống
 type BuaPhuLevel = 're' | 'daydu';
 type BuaChinhLevel = 're' | 'trungbinh' | 'caocap';
