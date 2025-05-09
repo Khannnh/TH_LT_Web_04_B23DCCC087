@@ -45,12 +45,12 @@
 		{
 		path: '/adminquanly/diemden',
 		name: 'Quản lý điểm đến',
-		// component: '@/pages/Destination/DiemDen',
+		component: '@/pages/Destination/DiemDen/page/Trangquantri',
 		},
 		{
 		path: '/adminquanly/thongke',
 		name: 'Thống kê',
-		// component: '@/pages/Destination/ThongKe',
+		//component: '@/pages/Destination/ThongKe',
 		},
 	],
 	},
