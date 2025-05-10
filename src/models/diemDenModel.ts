@@ -60,6 +60,7 @@ const useDiemDenModel = (): DiemDenModelState => {
         luuTru: { tietkiem: 0, trungbinh: 0, caocap: 0 },
         rating: 1,
         hinhAnhUrl: '',
+        phanloai: 'thanhpho', 
       },
     ]);
   };

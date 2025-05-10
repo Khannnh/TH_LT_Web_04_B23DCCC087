@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, InputNumber, Rate, Row, Col, Button, message } from 'antd';
+import { Form, Input, InputNumber, Rate, Row, Col, Button, message, Select } from 'antd';
 import type { FormInstance } from 'antd';
 import type { Destination } from '@/services/Destination/typing';
 import FormItemUrlOrUpload from '@/components/Upload/FormItemUrlOrUpload';
@@ -37,6 +37,14 @@ export const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish
     form.resetFields();
   };
 
+    const phanLoaiOptions = [
+    { label: 'Thành phố 🏙', value: 'thanhpho' },
+    { label: 'Biển🌊', value: 'bien' },
+    { label: 'Núi ⛰', value: 'nui' },
+    { label: 'Hồ ', value: 'ho' },
+    { label: 'Khu vực văn hóa', value: 'khuvucvanhoa' },
+  ];
+
   return (
     <Form
       form={form}
@@ -53,6 +61,17 @@ export const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish
             <Input placeholder="Nhập tên điểm đến" />
           </Form.Item>
         </Col>
+        
+        <Col xs={24} sm={24} md={12} lg={12} xl={8}>
+          <Form.Item
+            name="phanloai"
+            label="Phân loại"
+            rules={[{ required: true, message: 'Vui lòng chọn phân loại!' }]}
+          >
+             <Select placeholder="Chọn phân loại" options={phanLoaiOptions} />
+          </Form.Item>
+        </Col>
+
         <Col xs={24} sm={24} md={12} lg={12} xl={8}>
           <Form.Item
             name="thoiGianThamQuan"

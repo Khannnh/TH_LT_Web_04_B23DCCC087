@@ -3,6 +3,7 @@ export declare module Destination  {
 type BuaPhuLevel = 're' | 'daydu';
 type BuaChinhLevel = 're' | 'trungbinh' | 'caocap';
 type LuuTruLevel = 'tietkiem' | 'trungbinh' | 'caocap';
+type PhanLoai = 'thanhpho' | 'bien' | 'nui'  | 'ho' | 'khuvucvanhoa' ;
 
 export interface DiemDen {
   id: string;
@@ -21,6 +22,8 @@ export interface DiemDen {
   rating: number; // từ 1 đến 5
 
   hinhAnhUrl: string; // đường dẫn ảnh sau khi upload (hoặc base64 nếu lưu local)
+
+  phanloai: PhanLoai; // loại điểm đến: thành phố, biển, núi, hồ, khu vực văn hóa
 
   // Tùy chọn nâng cao: dùng để dự phòng khi chưa tích hợp Google Maps
   viTri?: {

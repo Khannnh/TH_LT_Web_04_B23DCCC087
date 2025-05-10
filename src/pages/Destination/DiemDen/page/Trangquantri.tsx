@@ -92,6 +92,9 @@ const QuanLyDiemDen: React.FC = () => {
                   <>
                     <Rate disabled defaultValue={diemDen.rating} />
                     {diemDen.moTa && <div style={{ fontSize: 12, color: 'gray', marginTop: 8 }}>{diemDen.moTa.substring(0, 50)}...</div>}
+                    <div style={{ fontSize: 12, color: 'gray', marginTop: 8 }}>
+                      <strong>Loại:</strong> {diemDen.phanloai}
+                    </div>
                   </>
                 }
               />
