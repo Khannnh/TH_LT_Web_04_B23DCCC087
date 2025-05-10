@@ -13,7 +13,7 @@ interface ThemMoiDiemDenFormProps {
 
 export const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCancel, form }) => {
   const handleFinish = async (values: any) => {
-    console.log('Form values:', values);
+    console.log('Giá trị của values.hinhAnh khi submit:', values.hinhAnh);
 
     let hinhAnhUrl = values.hinhAnh;
 

@@ -7,12 +7,17 @@ export enum EFileScope {
 	PRIVATE = 'Private',
 }
 
-const handleSingleFile = async (file: any, scope: EFileScope = EFileScope.PUBLIC): Promise<string | null> => {
+const handleSingleFile = async (
+	file: any,
+	scope: EFileScope = EFileScope.PUBLIC,
+	token?: string, // Add token as a parameter
+): Promise<string | null> => {
 	if (file?.originFileObj) {
 		try {
 			const response = await uploadFile({
 				file: file?.originFileObj,
 				scope,
+				token, // Pass token to uploadFile
 			});
 			return response?.data?.data?.url;
 		} catch (er) {
@@ -21,11 +26,15 @@ const handleSingleFile = async (file: any, scope: EFileScope = EFileScope.PUBLIC
 	} else return file?.url || null;
 };
 
-export async function uploadFile(payload: { file: string | Blob; scope: EFileScope }) {
-	const form = new FormData();
-	form.append('file', payload?.file);
-	form.append('scope', payload?.scope);
-	return axios.post(`${ip3}/file`, form);
+export async function uploadFile(payload: { file: string | Blob; scope: EFileScope; token?: string }) {
+    const form = new FormData();
+    form.append('file', payload?.file);
+    form.append('scope', payload?.scope);
+    const headers: HeadersInit = {};
+    if (payload?.token) {
+        headers.Authorization = `Bearer ${payload.token}`;
+    }
+    return axios.post(`${ip3}/file`, form, { headers }); // Thêm headers vào request
 }
 
 /**
@@ -39,6 +48,7 @@ export const buildUpLoadFile = async (
 	values: any,
 	fieldName: string,
 	scope: EFileScope = EFileScope.PUBLIC,
+	token?: string, // Thêm tham số token ở đây
 ): Promise<string | null> => {
 	// File updload chưa onChange => value vẫn là string
 	if (typeof values?.[fieldName] === 'string') return values[fieldName];

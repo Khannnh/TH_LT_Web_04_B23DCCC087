@@ -80,8 +80,8 @@ const QuanLyDiemDen: React.FC = () => {
                 )
               }
               actions={[
-                <Button size="small" onClick={() => handleEdit(diemDen)}>Sửa</Button>,
-                <Button size="small" danger onClick={() => handleDeleteDiemDen(diemDen.id)}>
+                <Button size="small" key =" edit" onClick={() => handleEdit(diemDen)}>Sửa</Button>,
+                <Button size="small" key =" delete" danger onClick={() => handleDeleteDiemDen(diemDen.id)}>
                   Xóa
                 </Button>,
               ]}
