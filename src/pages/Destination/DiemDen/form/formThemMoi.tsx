@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Form, Input, InputNumber, Rate, Row, Col, Button, message } from 'antd';
-import type { FormInstance } from 'antd'; // Import FormInstance as a type
+import type { FormInstance } from 'antd';
 import type { Destination } from '@/services/Destination/typing';
 import FormItemUrlOrUpload from '@/components/Upload/FormItemUrlOrUpload';
 import { buildUpLoadFile, EFileScope } from '@/services/uploadFile';
@@ -12,18 +11,15 @@ interface ThemMoiDiemDenFormProps {
   form: FormInstance<any>;
 }
 
-const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCancel, form }) => { // Destructure form from props
-  // const [form] = Form.useForm(); // Remove this line
-
+export const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCancel, form }) => {
   const handleFinish = async (values: any) => {
     console.log('Form values:', values);
 
     let hinhAnhUrl = values.hinhAnh;
 
-    // Kiểm tra nếu người dùng đã chọn tải lên file (object có fileList)
     if (typeof values.hinhAnh !== 'string' && values.hinhAnh?.fileList?.length > 0) {
       try {
-        const uploadedUrl = await buildUpLoadFile(values, 'hinhAnh', EFileScope.PUBLIC); // Sử dụng buildUpLoadFile
+        const uploadedUrl = await buildUpLoadFile(values, 'hinhAnh', EFileScope.PUBLIC);
         if (uploadedUrl) {
           hinhAnhUrl = uploadedUrl;
         } else {
@@ -35,7 +31,6 @@ const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCan
         return;
       }
     }
-    // Nếu là URL (string), chúng ta sẽ sử dụng trực tiếp
 
     const finalValues = { ...values, hinhAnhUrl };
     onFinish(finalValues as Omit<Destination.DiemDen, 'id'>);
@@ -64,7 +59,7 @@ const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCan
             label="Thời gian tham quan (giờ)"
             rules={[{ required: true, message: 'Vui lòng nhập thời gian tham quan!' }]}
           >
-            <InputNumber min={0.01} step={0.01} placeholder="Ví dụ: 1.5" />
+            <InputNumber min={0.1} step={0.1} placeholder="Ví dụ: 1.5" />
           </Form.Item>
         </Col>
         <Col xs={24} sm={24} md={12} lg={12} xl={8}>
@@ -84,7 +79,7 @@ const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCan
             name="moTa"
             label="Mô tả"
           >
-            <Input.TextArea rows={4} placeholder="Nhập mô tả về điểm đến" />
+            <Input.TextArea rows={5} placeholder="Nhập mô tả về điểm đến" />
           </Form.Item>
         </Col>
       </Row>
@@ -119,17 +114,17 @@ const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCan
 
       <Row gutter={16}>
         <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-          <Form.Item name={['luuTru', 'tietkiem']} label="Lưu trú (Tiết kiệm) / giờ">
+          <Form.Item name={['luuTru', 'tietkiem']} label="Lưu trú (Tiết kiệm) /người/ giờ">
             <InputNumber min={0} placeholder="Giá (VNĐ)" />
           </Form.Item>
         </Col>
         <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-          <Form.Item name={['luuTru', 'trungbinh']} label="Lưu trú (Trung bình) / giờ">
+          <Form.Item name={['luuTru', 'trungbinh']} label="Lưu trú (Trung bình) /người/ giờ">
             <InputNumber min={0} placeholder="Giá (VNĐ)" />
           </Form.Item>
         </Col>
         <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-          <Form.Item name={['luuTru', 'caocap']} label="Lưu trú (Cao cấp) / giờ">
+          <Form.Item name={['luuTru', 'caocap']} label="Lưu trú (Cao cấp) /người/ giờ">
             <InputNumber min={0} placeholder="Giá (VNĐ)" />
           </Form.Item>
         </Col>
@@ -138,8 +133,8 @@ const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCan
       <Row gutter={16}>
         <Col xs={24} sm={24} md={24} lg={12} xl={12}>
           <FormItemUrlOrUpload
-            form={form} // Pass the form instance
-            field="hinhAnh" // Sử dụng 'hinhAnh' làm name cho Form.Item
+            form={form}
+            field="hinhAnh"
             label="Hình ảnh"
             isRequired={true}
             accept="image/*"
@@ -160,5 +155,3 @@ const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish, onCan
     </Form>
   );
 };
-
-export default ThemMoiDiemDenForm;

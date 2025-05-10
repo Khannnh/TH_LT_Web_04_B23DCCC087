@@ -1,6 +1,5 @@
-// src/pages/Admin/QuanLyDiemDen/hooks/useQuanLyDiemDen.ts
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useDiemDenModel from '@/models/diemDenModel';
 import type { Destination } from '@/services/Destination/typing';
 import { message } from 'antd';
@@ -11,24 +10,19 @@ const useQuanLyDiemDen = () => {
     addNewExistingDiemDen,
     updateExistingDiemDen,
     removeExistingDiemDen,
-    newDiemDens,
     resetNewDiemDens,
-    editingDiemDen,
     clearEditingDiemDen,
   } = useDiemDenModel();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCreateDiemDens = async () => {
+  const handleCreateDiemDens = async (newDiemDenData: Omit<Destination.DiemDen, 'id'>) => {
     setLoading(true);
     setError(null);
     try {
-      newDiemDens.forEach((newDiemDen) => {
-        addNewExistingDiemDen({ ...newDiemDen, id: new Date().getTime().toString() });
-      });
-      message.success('Thêm mới các điểm đến thành công!');
-      resetNewDiemDens();
+      addNewExistingDiemDen({ id: Date.now().toString(), ...newDiemDenData }); // Tạo ID tạm thời ở client
+      message.success('Thêm mới điểm đến thành công!');
     } catch (catchError: any) {
       setError('Lỗi khi thêm mới điểm đến.');
     } finally {
@@ -70,7 +64,6 @@ const useQuanLyDiemDen = () => {
     handleCreateDiemDens,
     handleUpdateDiemDen,
     handleDeleteDiemDen,
-    editingDiemDen,
   };
 };
 
