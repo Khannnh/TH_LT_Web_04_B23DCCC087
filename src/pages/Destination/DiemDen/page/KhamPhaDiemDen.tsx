@@ -5,9 +5,47 @@ import type { Destination } from '@/services/Destination/typing';
 import styled from 'styled-components';
 
 const StyledCard = styled(Card)`
-  .ant-card-cover img {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .ant-card-cover {
     height: 200px;
-    object-fit: cover;
+    overflow: hidden;
+    @media (max-width: 768px) {
+      height: 150px; /* Giảm chiều cao ảnh trên màn hình nhỏ hơn */
+    }
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  }
+
+  .ant-card-meta-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    @media (max-width: 576px) {
+      font-size: 1em; /* Giảm kích thước tiêu đề trên màn hình siêu nhỏ */
+    }
+  }
+
+  .ant-card-meta-description {
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 8px;
+    height: 40px; /* Giới hạn chiều cao mô tả */
+    overflow: hidden;
+    @media (max-width: 576px) {
+      font-size: 0.9em; /* Giảm kích thước mô tả trên màn hình siêu nhỏ */
+      height: 30px; /* Giảm chiều cao mô tả trên màn hình siêu nhỏ */
+    }
   }
 `;
 
