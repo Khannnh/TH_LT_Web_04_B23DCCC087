@@ -56,8 +56,8 @@
 	},
 	{
 		path: '/diadiem',
-		name: 'Danh sách điểm đến',
-		// component: '@/pages/Destination/DiemDen',
+		name: 'Trang chủ_Khám phá điểm đến',
+		component: '@/pages/Destination/DiemDen/page/KhamPhaDiemDen',
 		icon: 'EnvironmentOutlined',
 	  },
 
