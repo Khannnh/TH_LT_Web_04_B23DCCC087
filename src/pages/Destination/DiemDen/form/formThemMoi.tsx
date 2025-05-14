@@ -61,7 +61,7 @@ export const ThemMoiDiemDenForm: React.FC<ThemMoiDiemDenFormProps> = ({ onFinish
             <Input placeholder="Nhập tên điểm đến" />
           </Form.Item>
         </Col>
-        
+
         <Col xs={24} sm={24} md={12} lg={12} xl={8}>
           <Form.Item
             name="phanloai"

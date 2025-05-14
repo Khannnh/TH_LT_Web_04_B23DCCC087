@@ -26,9 +26,18 @@ const QuanLyDiemDen: React.FC = () => {
 
   const handleCreateFormFinish = (values: Omit<Destination.DiemDen, 'id'>) => {
     handleCreateDiemDens(values);
+    
+    // Lưu thời gian tạo điểm đến mới
+    const danhSachLichTrinh = JSON.parse(localStorage.getItem('danhSachLichTrinh') || '[]');
+    danhSachLichTrinh.push({
+      ngayTao: new Date().toISOString(),
+      diaDiem: [values.ten]
+    });
+    localStorage.setItem('danhSachLichTrinh', JSON.stringify(danhSachLichTrinh));
+    
     setIsModalOpen(false);
     form.resetFields();
-  };
+};
 
   const handleEdit = (diemDen: Destination.DiemDen) => {
     startEditDiemDen(diemDen);

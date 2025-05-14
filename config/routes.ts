@@ -50,7 +50,7 @@
 		{
 		path: '/adminquanly/thongke',
 		name: 'Thống kê',
-		//component: '@/pages/Destination/ThongKe',
+		component: '@/pages/Destination/ThongKe/thongke',
 		},
 	],
 	},
