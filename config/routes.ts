@@ -54,13 +54,23 @@
 		},
 	],
 	},
+  {
+	path: '/quanlyđiaiem',
+	name: 'khám phá du lịch',
+	icon: 'SettingOutlined',
+	routes: [
 	{
-		path: '/diadiem',
+		path: '/quanlyđiaiem/diadiem',
 		name: 'Trang chủ_Khám phá điểm đến',
 		component: '@/pages/Destination/DiemDen/page/KhamPhaDiemDen',
-		icon: 'EnvironmentOutlined',
 	  },
-
+    {
+    path: '/quanlyđiaiem/diadiem/taolich',
+		name: 'Tạo lịch trình du lịch',
+		component: '@/pages/Destination/DiemDen/page/itinerary/ItineraryEditor.tsx',
+    }
+  ],
+},
 	// DANH MUC HE THONG
 	// {
 	// 	name: 'DanhMuc',
@@ -113,5 +123,5 @@
 	{
 		component: './exception/404',
 	},
-	
+
 ];
