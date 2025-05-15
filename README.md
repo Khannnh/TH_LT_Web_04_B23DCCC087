@@ -34,6 +34,11 @@ yarn start
 ```bash
 yarn build
 ```
-... hello
-#xinchao
-?good morning
+user_id (INT, PK, AI - Primary Key, Auto Increment)
+username (VARCHAR, UNIQUE, NOT NULL)
+password_hash (VARCHAR, NOT NULL)
+email (VARCHAR, UNIQUE, NOT NULL)
+full_name (VARCHAR)
+role (ENUM('student', 'admin'), NOT NULL)
+created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+updated_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)
